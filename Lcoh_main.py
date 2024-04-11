@@ -27,8 +27,8 @@ class Eletrolisador:
         Q = self.FlowRate
         pi = self.Pressure
         
-        CompressorCapex = Q*((R*T*Z)/(CompressorEfficiency*M))*(NumCompressor/(IsotropricCoefficient-1))*((p0/pi)**((IsotropricCoefficient-1)/(NumCompressor)) - 1)
-        return CompressorCapex
+        Pcomp = Q*((R*T*Z)/(CompressorEfficiency*M))*(NumCompressor/(IsotropricCoefficient-1))*((p0/pi)**((IsotropricCoefficient-1)/(NumCompressor)) - 1)
+        return Pcomp
 
     # Energia para produzir 1kg de hidrogenio
     def energy_prod_1kg(self):
@@ -75,13 +75,13 @@ class Energia:
     Se meu eletrolisador tem 1 MW e cf_sol 0.25, minha planta deve ter 1 MW/0.25 = 4 WM
     """
     def energy_total_capex_opex(self,pot,cf, nome, lifetime):
-        EnergyToStore = self.CapexBateria*(pot/cf - pot)*0.66
+        CapexEnergyToStore = self.CapexBateria*(pot/cf - pot)*0.66
 
         plantLifetime = self.t*365*24 # Tempo de vida em horas
-        TimeOperationElectrolyser = plantLifetime/(lifetime)
+        TimeOperationElectrolyser = plantLifetime/lifetime
         ciclosEletrolisador = np.ceil(TimeOperationElectrolyser*cf)
 
-        capex_energy = self.capex*(pot)*0.66 # capex_energy = self.capex*(pot/cf)
+        capex_energy = self.capex*(pot/cf)*0.66 + CapexEnergyToStore # capex_energy = self.capex*(pot/cf)
         tot_opex_energy = self.opex*capex_energy
 
         print('---------------------------------')
@@ -89,12 +89,11 @@ class Energia:
         print(f'{self.name} - {nome} Capex total {capex_energy * 10**-6:.2f} M$')
         print(f'{self.name} - {nome} Opex total {tot_opex_energy*10**-6:.2f} M$')
         print('---------------------------------')
-
         return capex_energy, tot_opex_energy, ciclosEletrolisador # Ta funcionando
 
 # Calcula a producao anual de energia em kg
 def wh2(pot, energy1kg, nome,cf):
-    aep = pot*24*365*cf*0.913 # 91.3% Fator de capacidade eletrolisadores
+    aep = pot*24*365*0.913 # 91.3% Fator de capacidade eletrolisadores
     wh2 = aep/energy1kg
     print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
     print(f'{nome} WH2: {wh2:.2f} kg')
@@ -117,7 +116,6 @@ def lcoh(tot_capex_el, tot_opex_el, tot_capex_energy, tot_opex_energy, ciclos, w
     
     print(f'{nome} - {energia_nome} Capex total: {capex_total*10**-6:.2f}')
     print(f'{nome} - {energia_nome} Opex anual: {opex_ano*10**-6:.2f}')
-    
     opex = 0
     total_lcoh = 0
     ahp_total = 0
@@ -331,9 +329,9 @@ def main():
     tot_capex_nuclear_pem, tot_opex_nuclear_pem, ciclo_pem_nuclear = nuclear.energy_total_capex_opex(pem.pot, cf_nuclear, pem.name, lifetime_pem)
 
     # Energia Capex e Opex AWE
-    tot_capex_solar_alk, tot_opex_solar_alk, ciclo_alk_solar = solar.energy_total_capex_opex(pot_alk, cf_sol, alk.name, lifetime_alk)
-    tot_capex_WindOnshore_alk, tot_opex_WindOnshore_alk, ciclo_alk_WindOnshore = WindOnshore.energy_total_capex_opex(pot_alk, cf_WindOnshore, alk.name, lifetime_alk)
-    tot_capex_WindOffshore_alk, tot_opex_WindOffshore_alk, ciclo_alk_WindOffshore = WindOffshore.energy_total_capex_opex(pot_alk, cf_WindOffshore, alk.name, lifetime_alk)
+    tot_capex_solar_alk, tot_opex_solar_alk, ciclo_alk_solar = solar.energy_total_capex_opex(alk.pot, cf_sol, alk.name, lifetime_alk)
+    tot_capex_WindOnshore_alk, tot_opex_WindOnshore_alk, ciclo_alk_WindOnshore = WindOnshore.energy_total_capex_opex(alk.pot, cf_WindOnshore, alk.name, lifetime_alk)
+    tot_capex_WindOffshore_alk, tot_opex_WindOffshore_alk, ciclo_alk_WindOffshore = WindOffshore.energy_total_capex_opex(alk.pot, cf_WindOffshore, alk.name, lifetime_alk)
     tot_capex_nuclear_alk, tot_opex_nuclear_alk, ciclo_alk_nuclear = nuclear.energy_total_capex_opex(alk.pot, cf_nuclear, alk.name, lifetime_alk)
 
     # Energia Capex e Opex SEOC

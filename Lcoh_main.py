@@ -27,8 +27,9 @@ class Eletrolisador:
         Q = self.FlowRate
         pi = self.Pressure
         
-        Pcomp = Q*((R*T*Z)/(CompressorEfficiency*M))*(NumCompressor/(IsotropricCoefficient-1))*((p0/pi)**((IsotropricCoefficient-1)/(NumCompressor)) - 1)
-        return Pcomp
+        Pcomp = Q*((R*T*Z)/(CompressorEfficiency*M))*(NumCompressor/(IsotropricCoefficient-1))*((p0/pi)**((IsotropricCoefficient-1)/(NumCompressor)) - 1)*10**-3
+        capex_compressor = 12600*(Pcomp/10)**0.9
+        return capex_compressor
 
     # Energia para produzir 1kg de hidrogenio
     def energy_prod_1kg(self):
@@ -75,13 +76,14 @@ class Energia:
     Se meu eletrolisador tem 1 MW e cf_sol 0.25, minha planta deve ter 1 MW/0.25 = 4 WM
     """
     def energy_total_capex_opex(self,pot,cf, nome, lifetime):
-        CapexEnergyToStore = self.CapexBateria*(pot/cf - pot)*0.66
+        PlantPower = pot/cf
+        CapexEnergyToStore = self.CapexBateria*(PlantPower - pot)*0.66
 
         plantLifetime = self.t*365*24 # Tempo de vida em horas
         TimeOperationElectrolyser = plantLifetime/lifetime
         ciclosEletrolisador = np.ceil(TimeOperationElectrolyser*cf)
 
-        capex_energy = self.capex*(pot/cf)*0.66 + CapexEnergyToStore # capex_energy = self.capex*(pot/cf)
+        capex_energy = self.capex*(PlantPower)*0.66 + CapexEnergyToStore # capex_energy = self.capex*(pot/cf)
         tot_opex_energy = self.opex*capex_energy
 
         print('---------------------------------')

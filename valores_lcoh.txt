@@ -1,20 +1,20 @@
-Solar PEM: 14.99 $/kg
-WindOnshore PEM: 13.52 $/kg
-WindOffshore PEM: 10.33 $/kg
+Solar PEM: 5.75 $/kg
+WindOnshore PEM: 5.98 $/kg
+WindOffshore PEM: 6.32 $/kg
 Nuclear PEM: 14.75 $/kg
 
-Solar AWE: 15.50 $/kg
-WindOnshore AWE: 13.95 $/kg
-WindOffshore AWE: 10.48 $/kg
+Solar AWE: 5.55 $/kg
+WindOnshore AWE: 5.79 $/kg
+WindOffshore AWE: 6.16 $/kg
 Nuclear AWE: 15.07 $/kg
 
-Solar SOEC: 14.40 $/kg
-WindOnshore SOEC: 14.17 $/kg
-WindOffshore SOEC: 11.44 $/kg
+Solar SOEC: 9.45 $/kg
+WindOnshore SOEC: 9.63 $/kg
+WindOffshore SOEC: 9.90 $/kg
 Nuclear SOEC: 16.48 $/kg
 
-Solar AEM: 14.87 $/kg
-WindOnshore AEM: 13.70 $/kg
-WindOffshore AEM: 10.57 $/kg
+Solar AEM: 6.83 $/kg
+WindOnshore AEM: 7.05 $/kg
+WindOffshore AEM: 7.38 $/kg
 Nuclear AEM: 15.47 $/kg
 

@@ -66,7 +66,7 @@ class Energia:
         self.opex = opex
         self.cf = cf
         self.t = 20
-        self.CapexBateria = 7350
+        self.CapexBateria = 7350*0.2
         self.OpexBateria = 70/self.CapexBateria 
 
     """
@@ -81,7 +81,7 @@ class Energia:
 
         plantLifetime = self.t*365*24 # Tempo de vida em horas
         TimeOperationElectrolyser = plantLifetime/lifetime
-        ciclosEletrolisador = np.ceil(TimeOperationElectrolyser*cf)
+        ciclosEletrolisador = np.ceil(TimeOperationElectrolyser)
 
         capex_energy = self.capex*(PlantPower)*0.66 + CapexEnergyToStore # capex_energy = self.capex*(pot/cf)
         tot_opex_energy = self.opex*capex_energy

@@ -256,7 +256,7 @@ def main():
     cf_WindOffshore = 0.47
     
     # Nuclear
-    capex_nuclear = 24500
+    capex_nuclear = 24500*0.2
     opex_nuclear = 0.013
     cf_nuclear = 1 
 

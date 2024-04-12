@@ -27,8 +27,8 @@ class Eletrolisador:
         Q = self.FlowRate
         pi = self.Pressure
         
-        CompressorCapex = Q*((R*T*Z)/(CompressorEfficiency*M))*(NumCompressor/(IsotropricCoefficient-1))*((p0/pi)**((IsotropricCoefficient-1)/(NumCompressor)) - 1)*10**-3
-        capex_compressor = 12600*(CompressorCapex/10)**0.9
+        CompressorPower = Q*((R*T*Z)/(CompressorEfficiency*M))*(NumCompressor/(IsotropricCoefficient-1))*((p0/pi)**((IsotropricCoefficient-1)/(NumCompressor)) - 1)*10**-3
+        capex_compressor = 12600*(CompressorPower/10)**0.9
         return capex_compressor
 
     # Energia para produzir 1kg de hidrogenio

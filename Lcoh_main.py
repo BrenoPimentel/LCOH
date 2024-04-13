@@ -1,270 +1,35 @@
 import numpy as np 
 import matplotlib.pyplot as plt 
+from classes import Energia, Eletrolisador
+from functions import plot_graph, write_txt, wh2, lcoh, write_excel
 
 
-class Eletrolisador:
-    # Define as caracteristicas do eletrolisador
-    def __init__(self, name, pot, h2, capex, opex, efficiency, lifetime, FlowRate, Pressure):
-        self.name = name
-        self.pot = pot
-        self.h2 = h2
-        self.capex = capex
-        self.opex = opex
-        self.ef = efficiency
-        self.lifetime = lifetime
-        self.FlowRate = FlowRate
-        self.Pressure = Pressure
-
-    def capexCompressor(self):
-        NumCompressor = 1 
-        IsotropricCoefficient = 1.4 
-        CompressorEfficiency = 0.75 
-        M = 2.016 # Massa molecular hidrogenio
-        R = 8.314 # Constante gas ideal
-        T = 310 # temperatura
-        Z = 1.03 # Fator de compressibilidade
-        p0 = 70 # Output pressure
-        Q = self.FlowRate
-        pi = self.Pressure
-        
-        Pcomp = Q*((R*T*Z)/(CompressorEfficiency*M))*(NumCompressor/(IsotropricCoefficient-1))*((p0/pi)**((IsotropricCoefficient-1)/(NumCompressor)) - 1)*10**-3
-        capex_compressor = 12600*(Pcomp/10)**0.9
-        return capex_compressor
-
-    # Energia para produzir 1kg de hidrogenio
-    def energy_prod_1kg(self):
-        energy_1kg = self.pot/self.h2
-        tot_energy = energy_1kg+energy_1kg*0.1
-        return tot_energy
-    
-    # Calcula o capex e opex total, com base na potencia multiplicada pelo preco por kW
-    def electrolyser_capex_opex(self):
-        CapexCompressor = self.capexCompressor()
-        if 'AEM' in self.name.upper():
-            CapexElectrolyzer = self.capex*self.pot
-            capex_total = (CapexElectrolyzer+CapexCompressor)*0.66
-            # Material - 2.5% | Labor - 5.0%   Deionized water - 0.01$/kg | Electrolyte (KOH) 2.75$/kg | Steam 0.01$/kg
-            opex_total = (0.025+0.05)*capex_total + (0.01 + 2.75 + 0.01)*(self.h2)
-
-        else:  
-            CapexElectrolyzer = self.capex*self.pot
-            capex_total = (CapexElectrolyzer+CapexCompressor)*0.66
-            opex_total = self.opex*capex_total
-        
-        print('=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
-        print(f'{self.name} Capex compressor = {CapexCompressor*10**-3:.2f} k$')
-        print(f'{self.name} Capex total {capex_total*10**-3:.2f} k$')
-        print(f'{self.name} Opex total {opex_total*10**-3:.2f} k$')
-        print('=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
-        return capex_total, opex_total
-    
-
-class Energia:
-    def __init__(self, name, capex, opex, cf):
-        self.name = name
-        self.capex = capex
-        self.opex = opex
-        self.cf = cf
-        self.t = 20
-        self.CapexBateria = 7350*0.2
-        self.OpexBateria = 70/self.CapexBateria 
-
-    """
-    Total capex e opex da fonte energia com base na potência do eletrolisador.
-    As potências dos eletrolisadores estão próximas de 1 MW então o capex e o opex são similares
-    Essa fórmula multiplica o capex pelo total de energia que minha planta deve ter com base no fator de capacidade
-    Se meu eletrolisador tem 1 MW e cf_sol 0.25, minha planta deve ter 1 MW/0.25 = 4 WM
-    """
-    def energy_total_capex_opex(self,pot,cf, nome, lifetime):
-        PlantPower = pot/cf
-        CapexEnergyToStore = self.CapexBateria*(PlantPower - pot)*0.66
-
-        plantLifetime = self.t*365*24 # Tempo de vida em horas
-        TimeOperationElectrolyser = plantLifetime/lifetime
-        ciclosEletrolisador = np.ceil(TimeOperationElectrolyser)
-
-        capex_energy = self.capex*(PlantPower)*0.66 + CapexEnergyToStore # capex_energy = self.capex*(pot/cf)
-        tot_opex_energy = self.opex*capex_energy
-
-        print('---------------------------------')
-        print(f'O {nome} - {self.name} tem {ciclosEletrolisador:.2f} ciclos')
-        print(f'{self.name} - {nome} Capex total {capex_energy * 10**-6:.2f} M$')
-        print(f'{self.name} - {nome} Opex total {tot_opex_energy*10**-6:.2f} M$')
-        print('---------------------------------')
-        return capex_energy, tot_opex_energy, ciclosEletrolisador # Ta funcionando
-
-# Calcula a producao anual de energia em kg
-def wh2(pot, energy1kg, nome,cf):
-    aep = pot*24*365*0.913 # 91.3% Fator de capacidade eletrolisadores
-    wh2 = aep/energy1kg
-    print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
-    print(f'{nome} WH2: {wh2:.2f} kg')
-    print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
-    return wh2
-
-# Calculo do Levelised Cosf Of Hydrogen
-def lcoh(tot_capex_el, tot_opex_el, tot_capex_energy, tot_opex_energy, ciclos, wh2, t, nome, energia_nome, wacc):
-    """
-    Consideracoes:
-    Stack replacement costs  = 50% Total CAPEX
-    Installation cost = 12% Total CAPEX
-    Indirect cost = 20% Total CAPEX
-    """
-    #capexEletrolisador = tot_capex_el + tot_capex_el*0.5*ciclos + 0.12*tot_capex_el + 0.2*tot_capex_el
-    capexEletrolisador = tot_capex_el*(1.32+0.5*ciclos)
-    capex_total = capexEletrolisador + tot_capex_energy
-    opex_ano = tot_opex_el + tot_opex_energy
-    ahp_ano = wh2
-    
-    print(f'{nome} - {energia_nome} Capex total: {capex_total*10**-6:.2f}')
-    print(f'{nome} - {energia_nome} Opex anual: {opex_ano*10**-6:.2f}')
-    opex = 0
-    total_lcoh = 0
-    ahp_total = 0
-
-    # Calcula o opex total considerando o wacc ao longo de t anos
-    for i in range(1,t+1):
-        op = (opex_ano)/((1 + wacc)**i)
-        opex += op 
-
-    # Calcula a produção total de hidrogenio ao longo de t anos
-    for i in range(1, t+1):
-        ahp_i = ahp_ano/((1 + wacc)**i)
-        ahp_total += ahp_i
-
-    total_lcoh = ((capex_total) + (opex))/(ahp_total)
-
-    print(f'A conta é {nome} - {energia_nome} ({capex_total*10**-6:.2f} + {opex*10**-6:.2f})/({ahp_total*10**-3:.2f} t) = LCOH = {total_lcoh:.2f} $/kg')
-    print('---------------------------------------------%')
-    return total_lcoh
-
-def plot_graph(lcoh_pem_pv, lcoh_pem_WindOnshore ,lcoh_pem_WindOffshore, lcoh_pem_nuclear, lcoh_alk_pv, lcoh_alk_WindOnshore, lcoh_alk_WindOffshore, lcoh_alk_nuclear, 
-               lcoh_soec_pv,lcoh_soec_WindOnshore, lcoh_soec_WindOffshore, lcoh_soec_nuclear, lcoh_aem_pv, lcoh_aem_WindOnshore, lcoh_aem_WindOffshore, lcoh_aem_nuclear):
-    # Dados
-    eletrolisadores = ['PEM', 'ALK', 'SOEC', 'AEM']
-    tecnologias = ['Solar', 'Eólica OnShore', 'Eólica OffShore', 'Nuclear']
-    custo_pem = [lcoh_pem_pv, lcoh_pem_WindOnshore, lcoh_pem_WindOffshore, lcoh_pem_nuclear]
-    custo_alk = [lcoh_alk_pv, lcoh_alk_WindOnshore, lcoh_alk_WindOffshore, lcoh_alk_nuclear]
-    custo_soec = [lcoh_soec_pv, lcoh_soec_WindOnshore, lcoh_soec_WindOffshore, lcoh_soec_nuclear]
-    custo_aem = [lcoh_aem_pv, lcoh_aem_WindOnshore, lcoh_aem_WindOffshore, lcoh_aem_nuclear]
-
-    # Cores mais sóbrias
-    cores = [
-        (46/255, 139/255, 87/255),  # ForestGreen
-        (138/255, 43/255, 226/255),  # Blueviolet
-        (255/255, 69/255, 0/255),  # Laranja avermelhado
-        (255/255, 200/255, 0/255)     # Amarelo
-    ]  
-
-    # Configuração do gráfico
-    barWidth = 0.2
-    fig, ax = plt.subplots(figsize=(10, 6)) 
-
-    # Posição das barras
-    r = np.arange(len(tecnologias))
-    r1 = r - barWidth
-    r2 = r
-    r3 = r + barWidth
-    r4 = r + 2*barWidth
-
-    # Plotagem das barras
-    ax.bar(r1, custo_pem, color=cores[0], width=barWidth, label= eletrolisadores[0]) 
-    ax.bar(r2, custo_alk, color=cores[1], width=barWidth, label=eletrolisadores[1]) 
-    ax.bar(r3, custo_soec, color=cores[2], width=barWidth, label=eletrolisadores[2]) 
-    ax.bar(r4, custo_aem, color=cores[3],width=barWidth, label=eletrolisadores[3]) 
-
-    # Personalização do gráfico
-    ax.set_xlabel('Tecnologia', fontweight='bold', fontsize=15) 
-    ax.set_ylabel('LCOH ($/kg)', fontweight='bold', fontsize=15) 
-    ax.set_xticks(r)
-    ax.set_xticklabels(tecnologias)
-    ax.legend()
-
-    plt.title('LCOH por Tecnologia de Eletrolisador e Fonte de Energia - 2030', fontsize=16, fontweight='bold')
-
-    ax.grid(True, linestyle='--')
-    
-    ax.set_yticks(np.arange(0, max(max(custo_pem), max(custo_alk), max(custo_soec), max(custo_aem)) + 1.25, 1.25))
-
-    # Função para fechar o gráfico ao pressionar 'q'
-    def press(event):
-        if event.key == 'q' or 'Q':
-            plt.close()
-
-    # Conectar a função de pressionar tecla ao gráfico
-    plt.connect('key_press_event', press)
-
-    # Mostrar gráfico
-    plt.show() 
-
-def write_txt(lcoh_pem_pv, lcoh_pem_WindOnshore, lcoh_pem_WindOffshore, lcoh_pem_nuclear,
-              lcoh_alk_pv, lcoh_alk_WindOnshore, lcoh_alk_WindOffshore, lcoh_alk_nuclear,
-              lcoh_soec_pv, lcoh_soec_WindOnshore, lcoh_soec_WindOffshore, lcoh_soec_nuclear,
-              lcoh_aem_pv, lcoh_aem_WindOnshore, lcoh_aem_WindOffshore, lcoh_aem_nuclear):
-    
-    lcoh_dict = {
-        'Solar PEM': lcoh_pem_pv,
-        'WindOnshore PEM': lcoh_pem_WindOnshore,
-        'WindOffshore PEM': lcoh_pem_WindOffshore,
-        'Nuclear PEM': lcoh_pem_nuclear,
-        'Solar AWE': lcoh_alk_pv,
-        'WindOnshore AWE': lcoh_alk_WindOnshore,
-        'WindOffshore AWE': lcoh_alk_WindOffshore,
-        'Nuclear AWE': lcoh_alk_nuclear,
-        'Solar SOEC': lcoh_soec_pv,
-        'WindOnshore SOEC': lcoh_soec_WindOnshore,
-        'WindOffshore SOEC': lcoh_soec_WindOffshore,
-        'Nuclear SOEC': lcoh_soec_nuclear,
-        'Solar AEM': lcoh_aem_pv,
-        'WindOnshore AEM': lcoh_aem_WindOnshore,
-        'WindOffshore AEM': lcoh_aem_WindOffshore,
-        'Nuclear AEM': lcoh_aem_nuclear
-    }
-
-    with open('valores_lcoh.txt', 'w') as arquivo:
-        i = 0
-        for chave, valor in lcoh_dict.items():
-            i += 1
-            if i % 4 == 0:
-                arquivo.write(f'{chave}: {valor:.2f} $/kg\n')
-                arquivo.write('\n')
-            else:
-                arquivo.write(f'{chave}: {valor:.2f} $/kg\n')
-
-    # Restante do código para escrever no arquivo
-
-
-def main():
+def parameters_present():
     e = Energia('a',0,0,0)
     t = e.t
     wacc = 8/100
+    year = 'present'
     ########### Energia ################
     ### custos energias
     # Solar
-    capex_sol = 3200*0.2 # USD/kW
+    capex_sol = 320*0.2 # USD/kW
     opex_sol = 0.02 # %
     cf_sol = 0.25
 
     # Wind Onshore
-    capex_WindOnshore = 4500*0.2 # USD/kW - EPE
+    capex_WindOnshore = 450*0.2 # USD/kW - EPE
     opex_WindOnshore = 90/capex_WindOnshore # %/ano 0.2
     cf_WindOnshore = 0.4
     
     # wind offshore
-    capex_WindOffshore = 12250*0.2 # USD/kW - EPE
+    capex_WindOffshore = 1225*0.2 # USD/kW - EPE
     opex_WindOffshore = 0.04 # %
     cf_WindOffshore = 0.47
     
     # Nuclear
-    capex_nuclear = 24500*0.2
+    capex_nuclear = 0*0.2
     opex_nuclear = 0.013
     cf_nuclear = 1 
-
-    # Energias
-    solar = Energia('Solar', capex_sol, opex_sol, cf_sol)
-    WindOnshore =Energia('WindOnshore', capex_WindOnshore, opex_WindOnshore, cf_WindOnshore)
-    WindOffshore = Energia('WindOffshore', capex_WindOffshore, opex_WindOffshore, cf_WindOffshore)
-    nuclear = Energia('Nuclear', capex_nuclear, opex_nuclear, cf_nuclear)
 
     ######### Eletrolisador ############
     ### Custos e parametros
@@ -300,7 +65,7 @@ def main():
     h2_soec = 24 # kg/h nao to usando pra nada pois calculamos por fora a energia para produzir 1kg
     FlowRate_soec = h2_soec/0.08988
     soec_energy_prod1kg = 39.4 + 39.4*0.1 # kWh/kg
-    soec_ef = 0
+    ef_soec = 0
     lifetime_soec = 50000 # h IEA
     bar_soec = 1
 
@@ -312,15 +77,202 @@ def main():
     FlowRate_aem = 210 # Nm3/h
     h2_aem = 453/24 # kg/h -> So esta sendo utilizado para calcular o opex, pois energia para produzir 1kg eh calculada por fora
     aem_energy_prod1kg = 53.3 # kWh/kg
-    aem_ef = 0.625 # LHV
+    ef_aem = 0.625 # LHV
     lifetime_aem = 20000 # h - (M. KIM et. al, 2024) - AEM Techno-economic
     bar_aem = 30
+
+    calculate(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnshore, opex_WindOnshore, cf_WindOnshore,
+            capex_WindOffshore, opex_WindOffshore, cf_WindOffshore, capex_nuclear, opex_nuclear, cf_nuclear,
+            capex_pem, opex_pem, pot_pem, h2_pem, FlowRate_pem, ef_pem, pem_energy_prod1kg, lifetime_pem, bar_pem,
+            capex_alk, opex_alk, pot_alk, h2_alk, FlowRate_alk, ef_alk, alk_energy_prod1kg, lifetime_alk, bar_alk,
+            capex_soec, opex_soec, pot_soec, h2_soec, FlowRate_soec, ef_soec, soec_energy_prod1kg, lifetime_soec, bar_soec,
+            capex_aem, nao_utilizado_opex, pot_aem, h2_aem, FlowRate_aem, ef_aem, aem_energy_prod1kg, lifetime_aem, bar_aem, year)
+
+def parameters_2030():
+    e = Energia('a',0,0,0)
+    t = e.t
+    wacc = 8/100
+    year = '2030'
+    ########### Energia ################
+    ### custos energias
+    # Solar
+    capex_sol = 3200*0.2 # USD/kW
+    opex_sol = 0.02 # %
+    cf_sol = 0.25
+
+    # Wind Onshore
+    capex_WindOnshore = 4500*0.2 # USD/kW - EPE
+    opex_WindOnshore = 90/capex_WindOnshore # %/ano 0.2
+    cf_WindOnshore = 0.4
+    
+    # wind offshore
+    capex_WindOffshore = 12250*0.2 # USD/kW - EPE
+    opex_WindOffshore = 0.04 # %
+    cf_WindOffshore = 0.47
+    
+    # Nuclear
+    capex_nuclear = 24500*0.2
+    opex_nuclear = 0.013
+    cf_nuclear = 1 
+
+    ######### Eletrolisador ############
+    ### Custos e parametros
+    # PEM parametros
+    capex_pem = 1000 # USD/kW
+    opex_pem = 0.02 # %
+
+    pot_pem = 988.68 # kW
+    h2_pem = 17.976 # kg/h 
+    FlowRate_pem = 200 # Nm3/h
+    ef_pem = 0
+    pem_energy_prod1kg = 55*1.01 # kWh/kg
+    lifetime_pem = 80000 # h IEA
+    bar_pem = 30
+
+    # Alkalino parametros
+    capex_alk = 650 # $/kW
+    opex_alk = 0.02
+    
+    pot_alk = 1000 # kW
+    FlowRate_alk = 200
+    h2_alk = FlowRate_alk*0.08988 # kg/h  nao to usando pra nada pois calculamos por fora a energia para produzir 1kg
+    ef_alk = 0
+    alk_energy_prod1kg = (4.8/0.08988) + (4.8/0.08988)*0.1 # kWh/kg
+    lifetime_alk = 80000 # h  Datasheet
+    bar_alk = 30
+
+    # Parametros SOEC
+    capex_soec = 1800 # $/kW
+    opex_soec = 0.02 # %
+
+    pot_soec = 1100 # kW
+    h2_soec = 24 # kg/h nao to usando pra nada pois calculamos por fora a energia para produzir 1kg
+    FlowRate_soec = h2_soec/0.08988
+    soec_energy_prod1kg = 39.4 + 39.4*0.1 # kWh/kg
+    ef_soec = 0
+    lifetime_soec = 50000 # h IEA
+    bar_soec = 1
+
+    # Parametros AEM
+    capex_aem = (469.13+258.02) # $/kW
+    nao_utilizado_opex = 1
+
+    pot_aem = 1000 # kW
+    FlowRate_aem = 210 # Nm3/h
+    h2_aem = 453/24 # kg/h -> So esta sendo utilizado para calcular o opex, pois energia para produzir 1kg eh calculada por fora
+    aem_energy_prod1kg = 53.3 # kWh/kg
+    ef_aem = 0.625 # LHV
+    lifetime_aem = 20000 # h - (M. KIM et. al, 2024) - AEM Techno-economic
+    bar_aem = 30
+
+    calculate(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnshore, opex_WindOnshore, cf_WindOnshore,
+            capex_WindOffshore, opex_WindOffshore, cf_WindOffshore, capex_nuclear, opex_nuclear, cf_nuclear,
+            capex_pem, opex_pem, pot_pem, h2_pem, FlowRate_pem, ef_pem, pem_energy_prod1kg, lifetime_pem, bar_pem,
+            capex_alk, opex_alk, pot_alk, h2_alk, FlowRate_alk, ef_alk, alk_energy_prod1kg, lifetime_alk, bar_alk,
+            capex_soec, opex_soec, pot_soec, h2_soec, FlowRate_soec, ef_soec, soec_energy_prod1kg, lifetime_soec, bar_soec,
+            capex_aem, nao_utilizado_opex, pot_aem, h2_aem, FlowRate_aem, ef_aem, aem_energy_prod1kg, lifetime_aem, bar_aem, year)
+
+def parameters_2050():
+    e = Energia('a',0,0,0)
+    t = e.t
+    wacc = 8/100
+    year = '2050'
+    ########### Energia ################
+    ### custos energias
+    # Solar
+    capex_sol = 32000*0.2 # USD/kW
+    opex_sol = 0.02 # %
+    cf_sol = 0.25
+
+    # Wind Onshore
+    capex_WindOnshore = 45000*0.2 # USD/kW - EPE
+    opex_WindOnshore = 90/capex_WindOnshore # %/ano 0.2
+    cf_WindOnshore = 0.4
+    
+    # wind offshore
+    capex_WindOffshore = 122500*0.2 # USD/kW - EPE
+    opex_WindOffshore = 0.04 # %
+    cf_WindOffshore = 0.47
+    
+    # Nuclear
+    capex_nuclear = 245000*0.2
+    opex_nuclear = 0.013
+    cf_nuclear = 1 
+
+    ######### Eletrolisador ############
+    ### Custos e parametros
+    # PEM parametros
+    capex_pem = 1000 # USD/kW
+    opex_pem = 0.02 # %
+
+    pot_pem = 988.68 # kW
+    h2_pem = 17.976 # kg/h 
+    FlowRate_pem = 200 # Nm3/h
+    ef_pem = 0
+    pem_energy_prod1kg = 55*1.01 # kWh/kg
+    lifetime_pem = 80000 # h IEA
+    bar_pem = 30
+
+    # Alkalino parametros
+    capex_alk = 650 # $/kW
+    opex_alk = 0.02
+    
+    pot_alk = 1000 # kW
+    FlowRate_alk = 200
+    h2_alk = FlowRate_alk*0.08988 # kg/h  nao to usando pra nada pois calculamos por fora a energia para produzir 1kg
+    ef_alk = 0
+    alk_energy_prod1kg = (4.8/0.08988) + (4.8/0.08988)*0.1 # kWh/kg
+    lifetime_alk = 80000 # h  Datasheet
+    bar_alk = 30
+
+    # Parametros SOEC
+    capex_soec = 1800 # $/kW
+    opex_soec = 0.02 # %
+
+    pot_soec = 1100 # kW
+    h2_soec = 24 # kg/h nao to usando pra nada pois calculamos por fora a energia para produzir 1kg
+    FlowRate_soec = h2_soec/0.08988
+    soec_energy_prod1kg = 39.4 + 39.4*0.1 # kWh/kg
+    ef_soec = 0
+    lifetime_soec = 50000 # h IEA
+    bar_soec = 1
+
+    # Parametros AEM
+    capex_aem = (469.13+258.02) # $/kW
+    nao_utilizado_opex = 1
+
+    pot_aem = 1000 # kW
+    FlowRate_aem = 210 # Nm3/h
+    h2_aem = 453/24 # kg/h -> So esta sendo utilizado para calcular o opex, pois energia para produzir 1kg eh calculada por fora
+    aem_energy_prod1kg = 53.3 # kWh/kg
+    ef_aem = 0.625 # LHV
+    lifetime_aem = 20000 # h - (M. KIM et. al, 2024) - AEM Techno-economic
+    bar_aem = 30
+
+    calculate(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnshore, opex_WindOnshore, cf_WindOnshore,
+            capex_WindOffshore, opex_WindOffshore, cf_WindOffshore, capex_nuclear, opex_nuclear, cf_nuclear,
+            capex_pem, opex_pem, pot_pem, h2_pem, FlowRate_pem, ef_pem, pem_energy_prod1kg, lifetime_pem, bar_pem,
+            capex_alk, opex_alk, pot_alk, h2_alk, FlowRate_alk, ef_alk, alk_energy_prod1kg, lifetime_alk, bar_alk,
+            capex_soec, opex_soec, pot_soec, h2_soec, FlowRate_soec, ef_soec, soec_energy_prod1kg, lifetime_soec, bar_soec,
+            capex_aem, nao_utilizado_opex, pot_aem, h2_aem, FlowRate_aem, ef_aem, aem_energy_prod1kg, lifetime_aem, bar_aem, year)
+
+def calculate(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnshore, opex_WindOnshore, cf_WindOnshore,
+            capex_WindOffshore, opex_WindOffshore, cf_WindOffshore, capex_nuclear, opex_nuclear, cf_nuclear,
+            capex_pem, opex_pem, pot_pem, h2_pem, FlowRate_pem, ef_pem, pem_energy_prod1kg, lifetime_pem, bar_pem,
+            capex_alk, opex_alk, pot_alk, h2_alk, FlowRate_alk, ef_alk, alk_energy_prod1kg, lifetime_alk, bar_alk,
+            capex_soec, opex_soec, pot_soec, h2_soec, FlowRate_soec, ef_soec, soec_energy_prod1kg, lifetime_soec, bar_soec,
+            capex_aem, nao_utilizado_opex, pot_aem, h2_aem, FlowRate_aem, ef_aem, aem_energy_prod1kg, lifetime_aem, bar_aem, year):
+    
+    solar = Energia('Solar', capex_sol, opex_sol, cf_sol)
+    WindOnshore =Energia('WindOnshore', capex_WindOnshore, opex_WindOnshore, cf_WindOnshore)
+    WindOffshore = Energia('WindOffshore', capex_WindOffshore, opex_WindOffshore, cf_WindOffshore)
+    nuclear = Energia('Nuclear', capex_nuclear, opex_nuclear, cf_nuclear)
 
     # Eletrolisadores
     pem = Eletrolisador('PEM-HyLYZER-200', pot_pem, h2_pem, capex_pem, opex_pem, ef_pem, lifetime_pem, FlowRate_pem, bar_pem)
     alk = Eletrolisador('Alkaline P200', pot_alk, h2_alk, capex_alk, opex_alk, ef_alk, lifetime_alk, FlowRate_alk, bar_alk)
-    soec = Eletrolisador('SOEC FuelCell Energy', pot_soec, h2_soec, capex_soec, opex_soec, soec_ef, lifetime_soec, FlowRate_soec, bar_soec)
-    aem = Eletrolisador('AEM Nexus 1000',pot_aem, h2_aem, capex_aem, nao_utilizado_opex, aem_ef, lifetime_aem, FlowRate_aem, bar_aem)
+    soec = Eletrolisador('SOEC FuelCell Energy', pot_soec, h2_soec, capex_soec, opex_soec, ef_soec, lifetime_soec, FlowRate_soec, bar_soec)
+    aem = Eletrolisador('AEM Nexus 1000',pot_aem, h2_aem, capex_aem, nao_utilizado_opex, ef_aem, lifetime_aem, FlowRate_aem, bar_aem)
 
     ############# Calculos #################
     ### Total capex opex energias, que é parecido porque as plantas tem apriximadamente 1 MW
@@ -430,13 +382,19 @@ def main():
 
 
     plot_graph(lcoh_pem_pv, lcoh_pem_WindOnshore, lcoh_pem_WindOffshore, lcoh_pem_nuclear, lcoh_alk_pv, lcoh_alk_WindOnshore,lcoh_alk_WindOffshore, lcoh_alk_nuclear, 
-               lcoh_soec_pv, lcoh_soec_WindOnshore, lcoh_soec_WindOffshore, lcoh_soec_nuclear, lcoh_aem_pv, lcoh_aem_WindOnshore, lcoh_aem_WindOffshore, lcoh_aem_nuclear)
+               lcoh_soec_pv, lcoh_soec_WindOnshore, lcoh_soec_WindOffshore, lcoh_soec_nuclear, lcoh_aem_pv, lcoh_aem_WindOnshore, lcoh_aem_WindOffshore, lcoh_aem_nuclear, year)
     
     write_txt(lcoh_pem_pv, lcoh_pem_WindOnshore, lcoh_pem_WindOffshore, lcoh_pem_nuclear,
           lcoh_alk_pv, lcoh_alk_WindOnshore, lcoh_alk_WindOffshore, lcoh_alk_nuclear,
           lcoh_soec_pv, lcoh_soec_WindOnshore, lcoh_soec_WindOffshore, lcoh_soec_nuclear,
-          lcoh_aem_pv, lcoh_aem_WindOnshore, lcoh_aem_WindOffshore, lcoh_aem_nuclear)
+          lcoh_aem_pv, lcoh_aem_WindOnshore, lcoh_aem_WindOffshore, lcoh_aem_nuclear, year)
+    
+    write_excel()
+    
+def main():
+    parameters_present()
+    parameters_2030()
+    parameters_2050()
 
 if __name__ == '__main__':
-    # os.system('cls' if os.name == 'nt' else 'clear')
     main()

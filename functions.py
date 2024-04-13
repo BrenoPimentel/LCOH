@@ -175,6 +175,14 @@ def wh2(pot, energy1kg, nome,cf):
     print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
     return wh2
 
+def wh2_no_storage(pot, energy1kg, nome, cf):
+    aep = pot*24*365*0.913*cf # 91.3% Fator de capacidade eletrolisadores
+    wh2_no_storage = aep/energy1kg
+    print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
+    print(f'{nome} WH2: {wh2:.2f} kg')
+    print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
+    return wh2_no_storage
+
 # Calculo do Levelised Cosf Of Hydrogen
 def lcoh(tot_capex_el, tot_opex_el, tot_capex_energy, tot_opex_energy, ciclos, wh2, t, nome, energia_nome, wacc):
     """

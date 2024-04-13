@@ -91,3 +91,19 @@ class Energia:
         print(f'{self.name} - {nome} Opex total {tot_opex_energy*10**-6:.2f} M$')
         print('---------------------------------')
         return capex_energy, tot_opex_energy, ciclosEletrolisador # Ta funcionando
+
+    def energy_no_storage_CapexOpex(self,pot,cf, nome, lifetime):
+        PlantPower = pot
+        plantLifetime = self.t*365*24 # Tempo de vida em horas
+        TimeOperationElectrolyser = plantLifetime/lifetime
+        ciclosEletrolisador = np.ceil(TimeOperationElectrolyser)*cf
+
+        capex_energy = self.capex*(PlantPower)*0.66  # capex_energy = self.capex*(pot/cf)
+        tot_opex_energy = self.opex*capex_energy
+
+        print('---------------------------------')
+        print(f'O {nome} - {self.name} tem {ciclosEletrolisador:.2f} ciclos')
+        print(f'{self.name} - {nome} Capex total {capex_energy * 10**-6:.2f} M$')
+        print(f'{self.name} - {nome} Opex total {tot_opex_energy*10**-6:.2f} M$')
+        print('---------------------------------')
+        return capex_energy, tot_opex_energy, ciclosEletrolisador # Ta funcionando

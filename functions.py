@@ -60,11 +60,11 @@ def plot_graph(lcoh_pem_pv, lcoh_pem_WindOnshore ,lcoh_pem_WindOffshore, lcoh_pe
 
     # Conectar a função de pressionar tecla ao gráfico
     plt.connect('key_press_event', press)
-    fig_path = 'C:\\Users\\breno\\Documents\\python_codes\\estudos-ic\\fig'
+    fig_path = 'C:\\Users\\breno\\Documents\\python_codes\\IC_main\\fig'
     if not os.path.exists(fig_path):
         os.makedirs(fig_path)
-        
-    plt.savefig(f'fig/LCOH-{year}' )
+
+    plt.savefig(os.path.join(fig_path, f'LCOH-{year}.png'))
     # Mostrar gráfico
 
 def write_txt(lcoh_pem_pv, lcoh_pem_WindOnshore, lcoh_pem_WindOffshore, lcoh_pem_nuclear,
@@ -91,9 +91,12 @@ def write_txt(lcoh_pem_pv, lcoh_pem_WindOnshore, lcoh_pem_WindOffshore, lcoh_pem
         'Nuclear AEM': lcoh_aem_nuclear
     }
 
-    output_path = 'C:\\Users\\breno\\Documents\\python_codes\\estudos-ic\\lcoh-txt'  # Caminho da pasta de destino
+    output_path = 'C:\\Users\\breno\\Documents\\python_codes\\IC_main\\lcoh-txt'  # Caminho da pasta de destino
     file_name = f'LCOH-{year}.txt'  # Nome do arquivo
     file_path = os.path.join(output_path, file_name)
+    
+    if not os.path.exists(file_path):
+        os.makedirs(file_path)
 
     try:
         with open(os.path.join(output_path, file_name), 'w') as arquivo:
@@ -149,7 +152,7 @@ def write_to_sheet(year, writer):
 
 def write_excel():
     # Caminho do arquivo Excel final
-    directory = 'C:\\Users\\breno\\Documents\\python_codes\\estudos-ic\\excel_file'
+    directory = 'C:\\Users\\breno\\Documents\\python_codes\\IC_main\\excel_file'
 
     if not os.path.exists(directory):
         os.makedirs(directory)

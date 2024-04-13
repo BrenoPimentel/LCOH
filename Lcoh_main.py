@@ -389,7 +389,7 @@ def calculate(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnshore, opex_Wind
           lcoh_soec_pv, lcoh_soec_WindOnshore, lcoh_soec_WindOffshore, lcoh_soec_nuclear,
           lcoh_aem_pv, lcoh_aem_WindOnshore, lcoh_aem_WindOffshore, lcoh_aem_nuclear, year)
     
-    write_excel()
+    #write_excel()
     
 def main():
     parameters_present()

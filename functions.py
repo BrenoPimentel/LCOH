@@ -95,8 +95,8 @@ def write_txt(lcoh_pem_pv, lcoh_pem_WindOnshore, lcoh_pem_WindOffshore, lcoh_pem
     file_name = f'LCOH-{year}.txt'  # Nome do arquivo
     file_path = os.path.join(output_path, file_name)
     
-    if not os.path.exists(file_path):
-        os.makedirs(file_path)
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
 
     try:
         with open(os.path.join(output_path, file_name), 'w') as arquivo:

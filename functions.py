@@ -128,10 +128,8 @@ def write_to_sheet(year, writer):
     df = pd.DataFrame(data)
     # Escrevendo o DataFrame no Excel, em uma sheet específica para o ano
     df.to_excel(writer, sheet_name=str(year), index=False)
-    #excel_path = (f'excel_file/LCOH-{year}.xlsx')
-    #df.to_excel(excel_path, index=False)
-    # Abrindo a sheet recém-criada para aplicar a formatação
 
+    # Abrindo a sheet recém-criada para aplicar a formatação
     #workbook = writer.book
     worksheet = writer.book[year]
 
@@ -159,11 +157,31 @@ def write_excel():
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-    file_name = 'LCOH_Multi_Year.xlsx'
-    excel_path = os.path.join(directory, file_name)
+    file_LCOH_Present_Storage = 'LCOH_Present-Storage.xlsx'
+    file_LCOH_2030_Storage = 'LCOH_2030-Storage.xlsx'
+    file_LCOH_2050_Storage = 'LCOH_2050-Storage.xlsx'
+
+    excel_path_LCOH_Present_Storage = os.path.join(directory, file_LCOH_Present_Storage)
+    excel_path_LCOH_2030_Storage = os.path.join(directory, file_LCOH_2030_Storage)
+    excel_path_LCOH_2050_Storage = os.path.join(directory, file_LCOH_2050_Storage)
+
     # Criando um ExcelWriter para poder escrever múltiplas sheets
 
-    with pd.ExcelWriter(excel_path, engine='openpyxl') as writer:
+    with pd.ExcelWriter(excel_path_LCOH_Present_Storage, engine='openpyxl') as writer:
+        # Chamar a função write_to_sheet para cada ano necessário
+        # write_to_sheet first argument is the .txt file name. 
+        # Change to pessimist, convservative optmist 
+        write_to_sheet('Present-Storage', writer)  # First argument is the file's name and sheet name
+        write_to_sheet('2030-Storage', writer)
+        write_to_sheet('2050-Storage', writer)
+
+    with pd.ExcelWriter(excel_path_LCOH_2030_Storage, engine='openpyxl') as writer:
+        # Chamar a função write_to_sheet para cada ano necessário
+        write_to_sheet('Present-Storage', writer)  # Ajuste conforme o ano presente real, se necessário
+        write_to_sheet('2030-Storage', writer)
+        write_to_sheet('2050-Storage', writer)
+
+    with pd.ExcelWriter(excel_path_LCOH_2050_Storage, engine='openpyxl') as writer:
         # Chamar a função write_to_sheet para cada ano necessário
         write_to_sheet('Present-Storage', writer)  # Ajuste conforme o ano presente real, se necessário
         write_to_sheet('2030-Storage', writer)

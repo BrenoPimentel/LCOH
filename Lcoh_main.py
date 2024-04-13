@@ -4,12 +4,16 @@ from classes import Energia, Eletrolisador
 from functions import plot_graph, write_txt, wh2, wh2_no_storage, lcoh, write_excel
 
 
-def parameters_present():
+def parameters_present_conservative():
     e = Energia('a',0,0,0)
     t = e.t
     wacc = 8/100
     year_storage = 'Present-Storage'
     year_no_storage = 'Present-No-Storage'
+
+    capex_battery = 73500
+    opex_battery = 500/73500
+
     ########### Energia ################
     ### custos energias
     # Solar
@@ -87,7 +91,7 @@ def parameters_present():
             capex_pem, opex_pem, pot_pem, h2_pem, FlowRate_pem, ef_pem, pem_energy_prod1kg, lifetime_pem, bar_pem,
             capex_alk, opex_alk, pot_alk, h2_alk, FlowRate_alk, ef_alk, alk_energy_prod1kg, lifetime_alk, bar_alk,
             capex_soec, opex_soec, pot_soec, h2_soec, FlowRate_soec, ef_soec, soec_energy_prod1kg, lifetime_soec, bar_soec,
-            capex_aem, nao_utilizado_opex, pot_aem, h2_aem, FlowRate_aem, ef_aem, aem_energy_prod1kg, lifetime_aem, bar_aem, year_storage)
+            capex_aem, nao_utilizado_opex, pot_aem, h2_aem, FlowRate_aem, ef_aem, aem_energy_prod1kg, lifetime_aem, bar_aem, year_storage, capex_battery, opex_battery)
 
     calculate_no_storage(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnshore, opex_WindOnshore, cf_WindOnshore,
             capex_WindOffshore, opex_WindOffshore, cf_WindOffshore, capex_nuclear, opex_nuclear, cf_nuclear,
@@ -96,12 +100,16 @@ def parameters_present():
             capex_soec, opex_soec, pot_soec, h2_soec, FlowRate_soec, ef_soec, soec_energy_prod1kg, lifetime_soec, bar_soec,
             capex_aem, nao_utilizado_opex, pot_aem, h2_aem, FlowRate_aem, ef_aem, aem_energy_prod1kg, lifetime_aem, bar_aem, year_no_storage)
 
-def parameters_2030():
+def parameters_2030_conservative():
     e = Energia('a',0,0,0)
     t = e.t
     wacc = 8/100
     year_storage = '2030-Storage'
     year_no_storage = '2030-No-Storage'
+
+    capex_battery = 7350*0.2
+    opex_battery = 50/7350
+
     ########### Energia ################
     ### custos energias
     # Solar
@@ -179,7 +187,7 @@ def parameters_2030():
             capex_pem, opex_pem, pot_pem, h2_pem, FlowRate_pem, ef_pem, pem_energy_prod1kg, lifetime_pem, bar_pem,
             capex_alk, opex_alk, pot_alk, h2_alk, FlowRate_alk, ef_alk, alk_energy_prod1kg, lifetime_alk, bar_alk,
             capex_soec, opex_soec, pot_soec, h2_soec, FlowRate_soec, ef_soec, soec_energy_prod1kg, lifetime_soec, bar_soec,
-            capex_aem, nao_utilizado_opex, pot_aem, h2_aem, FlowRate_aem, ef_aem, aem_energy_prod1kg, lifetime_aem, bar_aem, year_storage)
+            capex_aem, nao_utilizado_opex, pot_aem, h2_aem, FlowRate_aem, ef_aem, aem_energy_prod1kg, lifetime_aem, bar_aem, year_storage, capex_battery, opex_battery)
     
     calculate_no_storage(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnshore, opex_WindOnshore, cf_WindOnshore,
             capex_WindOffshore, opex_WindOffshore, cf_WindOffshore, capex_nuclear, opex_nuclear, cf_nuclear,
@@ -188,12 +196,16 @@ def parameters_2030():
             capex_soec, opex_soec, pot_soec, h2_soec, FlowRate_soec, ef_soec, soec_energy_prod1kg, lifetime_soec, bar_soec,
             capex_aem, nao_utilizado_opex, pot_aem, h2_aem, FlowRate_aem, ef_aem, aem_energy_prod1kg, lifetime_aem, bar_aem, year_no_storage)
 
-def parameters_2050():
+def parameters_2050_conservative():
     e = Energia('a',0,0,0)
     t = e.t
     wacc = 8/100
     year_storage = '2050-Storage'
     year_no_storage = '2050-No-Storage'
+
+    capex_battery = 73500
+    opex_battery = 500/73500
+
     ########### Energia ################
     ### custos energias
     # Solar
@@ -271,7 +283,7 @@ def parameters_2050():
             capex_pem, opex_pem, pot_pem, h2_pem, FlowRate_pem, ef_pem, pem_energy_prod1kg, lifetime_pem, bar_pem,
             capex_alk, opex_alk, pot_alk, h2_alk, FlowRate_alk, ef_alk, alk_energy_prod1kg, lifetime_alk, bar_alk,
             capex_soec, opex_soec, pot_soec, h2_soec, FlowRate_soec, ef_soec, soec_energy_prod1kg, lifetime_soec, bar_soec,
-            capex_aem, nao_utilizado_opex, pot_aem, h2_aem, FlowRate_aem, ef_aem, aem_energy_prod1kg, lifetime_aem, bar_aem, year_storage)
+            capex_aem, nao_utilizado_opex, pot_aem, h2_aem, FlowRate_aem, ef_aem, aem_energy_prod1kg, lifetime_aem, bar_aem, year_storage, capex_battery, opex_battery)
     
     calculate_no_storage(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnshore, opex_WindOnshore, cf_WindOnshore,
             capex_WindOffshore, opex_WindOffshore, cf_WindOffshore, capex_nuclear, opex_nuclear, cf_nuclear,
@@ -285,7 +297,7 @@ def calculate_with_storage(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnsho
             capex_pem, opex_pem, pot_pem, h2_pem, FlowRate_pem, ef_pem, pem_energy_prod1kg, lifetime_pem, bar_pem,
             capex_alk, opex_alk, pot_alk, h2_alk, FlowRate_alk, ef_alk, alk_energy_prod1kg, lifetime_alk, bar_alk,
             capex_soec, opex_soec, pot_soec, h2_soec, FlowRate_soec, ef_soec, soec_energy_prod1kg, lifetime_soec, bar_soec,
-            capex_aem, nao_utilizado_opex, pot_aem, h2_aem, FlowRate_aem, ef_aem, aem_energy_prod1kg, lifetime_aem, bar_aem, year_storage):
+            capex_aem, nao_utilizado_opex, pot_aem, h2_aem, FlowRate_aem, ef_aem, aem_energy_prod1kg, lifetime_aem, bar_aem, year_storage, capex_battery, opex_battery):
     
     solar = Energia('Solar', capex_sol, opex_sol, cf_sol)
     WindOnshore = Energia('WindOnshore', capex_WindOnshore, opex_WindOnshore, cf_WindOnshore)
@@ -301,28 +313,28 @@ def calculate_with_storage(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnsho
     ############# Calculos #################
     ### Total capex opex energias, que é parecido porque as plantas tem apriximadamente 1 MW
     # Energias Capex e Opex PEM
-    tot_capex_solar_pem, tot_opex_solar_pem, ciclo_pem_solar = solar.energy_total_capex_opex(pem.pot,cf_sol, pem.name, lifetime_pem) # Entro com a potencia pois a potencia instalada é com base na potencia do eletrolisador e do cf
-    tot_capex_WindOnshore_pem, tot_opex_WindOnshore_pem, ciclo_pem_WindOnshore = WindOnshore.energy_total_capex_opex(pem.pot, cf_WindOnshore, pem.name, lifetime_pem)
-    tot_capex_WindOffshore_pem, tot_opex_WindOffshore_pem, ciclo_pem_WindOffshore = WindOffshore.energy_total_capex_opex(pem.pot, cf_WindOffshore, pem.name, lifetime_pem)
-    tot_capex_nuclear_pem, tot_opex_nuclear_pem, ciclo_pem_nuclear = nuclear.energy_total_capex_opex(pem.pot, cf_nuclear, pem.name, lifetime_pem)
+    tot_capex_solar_pem, tot_opex_solar_pem, ciclo_pem_solar = solar.energy_total_capex_opex(pem.pot,cf_sol, pem.name, lifetime_pem, capex_battery, opex_battery) # Entro com a potencia pois a potencia instalada é com base na potencia do eletrolisador e do cf
+    tot_capex_WindOnshore_pem, tot_opex_WindOnshore_pem, ciclo_pem_WindOnshore = WindOnshore.energy_total_capex_opex(pem.pot, cf_WindOnshore, pem.name, lifetime_pem, capex_battery, opex_battery)
+    tot_capex_WindOffshore_pem, tot_opex_WindOffshore_pem, ciclo_pem_WindOffshore = WindOffshore.energy_total_capex_opex(pem.pot, cf_WindOffshore, pem.name, lifetime_pem, capex_battery, opex_battery)
+    tot_capex_nuclear_pem, tot_opex_nuclear_pem, ciclo_pem_nuclear = nuclear.energy_total_capex_opex(pem.pot, cf_nuclear, pem.name, lifetime_pem, capex_battery, opex_battery)
 
     # Energia Capex e Opex AWE
-    tot_capex_solar_alk, tot_opex_solar_alk, ciclo_alk_solar = solar.energy_total_capex_opex(alk.pot, cf_sol, alk.name, lifetime_alk)
-    tot_capex_WindOnshore_alk, tot_opex_WindOnshore_alk, ciclo_alk_WindOnshore = WindOnshore.energy_total_capex_opex(alk.pot, cf_WindOnshore, alk.name, lifetime_alk)
-    tot_capex_WindOffshore_alk, tot_opex_WindOffshore_alk, ciclo_alk_WindOffshore = WindOffshore.energy_total_capex_opex(alk.pot, cf_WindOffshore, alk.name, lifetime_alk)
-    tot_capex_nuclear_alk, tot_opex_nuclear_alk, ciclo_alk_nuclear = nuclear.energy_total_capex_opex(alk.pot, cf_nuclear, alk.name, lifetime_alk)
+    tot_capex_solar_alk, tot_opex_solar_alk, ciclo_alk_solar = solar.energy_total_capex_opex(alk.pot, cf_sol, alk.name, lifetime_alk, capex_battery, opex_battery)
+    tot_capex_WindOnshore_alk, tot_opex_WindOnshore_alk, ciclo_alk_WindOnshore = WindOnshore.energy_total_capex_opex(alk.pot, cf_WindOnshore, alk.name, lifetime_alk, capex_battery, opex_battery)
+    tot_capex_WindOffshore_alk, tot_opex_WindOffshore_alk, ciclo_alk_WindOffshore = WindOffshore.energy_total_capex_opex(alk.pot, cf_WindOffshore, alk.name, lifetime_alk, capex_battery, opex_battery)
+    tot_capex_nuclear_alk, tot_opex_nuclear_alk, ciclo_alk_nuclear = nuclear.energy_total_capex_opex(alk.pot, cf_nuclear, alk.name, lifetime_alk, capex_battery, opex_battery)
 
     # Energia Capex e Opex SEOC
-    tot_capex_solar_soec, tot_opex_solar_soec, ciclo_soec_solar = solar.energy_total_capex_opex(soec.pot, cf_sol, soec.name, lifetime_soec)
-    tot_capex_WindOnshore_soec, tot_opex_WindOnshore_soec, ciclo_soec_WindOnshore = WindOnshore.energy_total_capex_opex(soec.pot, cf_WindOnshore, soec.name, lifetime_soec)
-    tot_capex_WindOffshore_soec, tot_opex_WindOffshore_soec, ciclo_soec_WindOffshore = WindOffshore.energy_total_capex_opex(soec.pot, cf_WindOffshore, soec.name, lifetime_soec)
-    tot_capex_nuclear_soec, tot_opex_nuclear_soec, ciclo_soec_nuclear = nuclear.energy_total_capex_opex(soec.pot, cf_nuclear, soec.name, lifetime_soec)
+    tot_capex_solar_soec, tot_opex_solar_soec, ciclo_soec_solar = solar.energy_total_capex_opex(soec.pot, cf_sol, soec.name, lifetime_soec, capex_battery, opex_battery)
+    tot_capex_WindOnshore_soec, tot_opex_WindOnshore_soec, ciclo_soec_WindOnshore = WindOnshore.energy_total_capex_opex(soec.pot, cf_WindOnshore, soec.name, lifetime_soec, capex_battery, opex_battery)
+    tot_capex_WindOffshore_soec, tot_opex_WindOffshore_soec, ciclo_soec_WindOffshore = WindOffshore.energy_total_capex_opex(soec.pot, cf_WindOffshore, soec.name, lifetime_soec, capex_battery, opex_battery)
+    tot_capex_nuclear_soec, tot_opex_nuclear_soec, ciclo_soec_nuclear = nuclear.energy_total_capex_opex(soec.pot, cf_nuclear, soec.name, lifetime_soec, capex_battery, opex_battery)
 
     # Energia capex opex AEM
-    tot_capex_solar_aem, tot_opex_solar_aem, ciclo_aem_solar = solar.energy_total_capex_opex(aem.pot, cf_sol, aem.name, lifetime_aem)    
-    tot_capex_WindOnshore_aem, tot_opex_WindOnshore_aem, ciclo_aem_WindOnshore = WindOnshore.energy_total_capex_opex(aem.pot, cf_WindOnshore, aem.name, lifetime_aem)
-    tot_capex_WindOffshore_aem, tot_opex_WindOffshore_aem, ciclo_aem_WindOffshore = WindOffshore.energy_total_capex_opex(aem.pot, cf_WindOffshore, aem.name, lifetime_aem)
-    tot_capex_nuclear_aem, tot_opex_nuclear_aem, ciclo_aem_nuclear = nuclear.energy_total_capex_opex(aem.pot, cf_nuclear, aem.name, lifetime_aem)
+    tot_capex_solar_aem, tot_opex_solar_aem, ciclo_aem_solar = solar.energy_total_capex_opex(aem.pot, cf_sol, aem.name, lifetime_aem, capex_battery, opex_battery)    
+    tot_capex_WindOnshore_aem, tot_opex_WindOnshore_aem, ciclo_aem_WindOnshore = WindOnshore.energy_total_capex_opex(aem.pot, cf_WindOnshore, aem.name, lifetime_aem, capex_battery, opex_battery)
+    tot_capex_WindOffshore_aem, tot_opex_WindOffshore_aem, ciclo_aem_WindOffshore = WindOffshore.energy_total_capex_opex(aem.pot, cf_WindOffshore, aem.name, lifetime_aem, capex_battery, opex_battery)
+    tot_capex_nuclear_aem, tot_opex_nuclear_aem, ciclo_aem_nuclear = nuclear.energy_total_capex_opex(aem.pot, cf_nuclear, aem.name, lifetime_aem, capex_battery, opex_battery)
 
     #########
     ####### Eletrolisador Capex e opex ##### Busco na classe o valor do meu capex e opex total
@@ -415,7 +427,6 @@ def calculate_with_storage(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnsho
     
     write_excel()
 
-    #write_to_sheet(year_storage)
 
 def calculate_no_storage(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnshore, opex_WindOnshore, cf_WindOnshore,
             capex_WindOffshore, opex_WindOffshore, cf_WindOffshore, capex_nuclear, opex_nuclear, cf_nuclear,
@@ -550,14 +561,13 @@ def calculate_no_storage(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnshore
           lcoh_no_storage_soec_pv, lcoh_no_storage_soec_WindOnshore, lcoh_no_storage_soec_WindOffshore, lcoh_no_storage_soec_nuclear,
           lcoh_no_storage_aem_pv, lcoh_no_storage_aem_WindOnshore, lcoh_no_storage_aem_WindOffshore, lcoh_no_storage_aem_nuclear, year_no_storage)
     
-    #write_to_sheet(year_no_storage)
     
     #write_excel()
 
 def main():
-    parameters_present()
-    parameters_2030()
-    parameters_2050()
+    parameters_present_conservative()
+    parameters_2030_conservative()
+    parameters_2050_conservative()
 
 if __name__ == '__main__':
     main()

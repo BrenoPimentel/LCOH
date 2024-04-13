@@ -65,8 +65,6 @@ class Energia:
         self.opex = opex
         self.cf = cf
         self.t = 20
-        self.CapexBateria = 7350*0.2
-        self.OpexBateria = 70/self.CapexBateria 
 
     """
     Total capex e opex da fonte energia com base na potência do eletrolisador.
@@ -74,16 +72,16 @@ class Energia:
     Essa fórmula multiplica o capex pelo total de energia que minha planta deve ter com base no fator de capacidade
     Se meu eletrolisador tem 1 MW e cf_sol 0.25, minha planta deve ter 1 MW/0.25 = 4 WM
     """
-    def energy_total_capex_opex(self,pot,cf, nome, lifetime):
+    def energy_total_capex_opex(self,pot,cf, nome, lifetime, capex_battery, opex_battery):
         PlantPower = pot/cf
-        CapexEnergyToStore = self.CapexBateria*(PlantPower - pot)*0.66
+        CapexEnergyToStore = capex_battery*(PlantPower - pot)*0.66
 
-        plantLifetime = self.t*365*24 # Tempo de vida em horas
+        plantLifetime = self.t*365*24 # hours lifetime 
         TimeOperationElectrolyser = plantLifetime/lifetime
         ciclosEletrolisador = np.ceil(TimeOperationElectrolyser)
 
         capex_energy = self.capex*(PlantPower)*0.66 + CapexEnergyToStore # capex_energy = self.capex*(pot/cf)
-        tot_opex_energy = self.opex*capex_energy
+        tot_opex_energy = self.opex*capex_energy + opex_battery*CapexEnergyToStore
 
         print('---------------------------------')
         print(f'O {nome} - {self.name} tem {ciclosEletrolisador:.2f} ciclos')

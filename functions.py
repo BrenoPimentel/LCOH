@@ -110,8 +110,7 @@ def write_txt(lcoh_pem_pv, lcoh_pem_WindOnshore, lcoh_pem_WindOffshore, lcoh_pem
     except Exception as e:
         print('Error: ' + str(e))
 
-# def write_to_sheet(year, writer)
-def write_to_sheet(year):
+def write_to_sheet(year, writer):
     file_path = (f'lcoh-txt/LCOH-{year}.txt')
     data = {'Technology': [], 'LCOH': []}
 
@@ -128,46 +127,47 @@ def write_to_sheet(year):
     # Convertendo o dicionário para DataFrame
     df = pd.DataFrame(data)
     # Escrevendo o DataFrame no Excel, em uma sheet específica para o ano
-    #df.to_excel(writer, sheet_name=str(year), index=False)
-    excel_path = (f'excel_file/LCOH-{year}.xlsx')
-    df.to_excel(excel_path, index=False)
-    # # Abrindo a sheet recém-criada para aplicar a formatação
-    # #workbook = writer.book
-    # worksheet = writer.book[year]
+    df.to_excel(writer, sheet_name=str(year), index=False)
+    #excel_path = (f'excel_file/LCOH-{year}.xlsx')
+    #df.to_excel(excel_path, index=False)
+    # Abrindo a sheet recém-criada para aplicar a formatação
 
-    # # Centralizando os dados em todas as células da planilha
-    # for row in worksheet.iter_rows():
-    #     for cell in row:
-    #         cell.alignment = Alignment(horizontal='center', vertical='center')
+    #workbook = writer.book
+    worksheet = writer.book[year]
 
-    # for column in worksheet.columns:
-    #     max_length = 0
-    #     column_letter = get_column_letter(column[0].column)  # Obtém a letra da coluna
-    #     for cell in column:
-    #         try:
-    #             if len(str(cell.value)) > max_length:
-    #                 max_length = len(str(cell.value))
-    #         except:
-    #             pass
-    #     adjusted_width = (max_length + 2) * 1.2  # Fator de ajuste para garantir espaço extra
-    #     worksheet.column_dimensions[column_letter].width = adjusted_width
+    # Centralizando os dados em todas as células da planilha
+    for row in worksheet.iter_rows():
+        for cell in row:
+            cell.alignment = Alignment(horizontal='center', vertical='center')
 
-#def write_excel():
-    # Caminho do arquivo Excel final
-    # directory = 'C:\\Users\\breno\\Documents\\python_codes\\IC_main\\excel_file'
+    for column in worksheet.columns:
+        max_length = 0
+        column_letter = get_column_letter(column[0].column)  # Obtém a letra da coluna
+        for cell in column:
+            try:
+                if len(str(cell.value)) > max_length:
+                    max_length = len(str(cell.value))
+            except:
+                pass
+        adjusted_width = (max_length + 2) * 1.2  # Fator de ajuste para garantir espaço extra
+        worksheet.column_dimensions[column_letter].width = adjusted_width
 
-    # if not os.path.exists(directory):
-    #     os.makedirs(directory)
+def write_excel():
+    #Caminho do arquivo Excel final
+    directory = 'C:\\Users\\breno\\Documents\\python_codes\\IC_main\\excel_file'
 
-    # file_name = 'LCOH_Multi_Year.xlsx'
-    # excel_path = os.path.join(directory, file_name)
-    # # Criando um ExcelWriter para poder escrever múltiplas sheets
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
-    # with pd.ExcelWriter(excel_path, engine='openpyxl') as writer:
-    #     # Chamar a função write_to_sheet para cada ano necessário
-    #     write_to_sheet('Present', writer)  # Ajuste conforme o ano presente real, se necessário
-    #     write_to_sheet('2030', writer)
-    #     write_to_sheet('2050', writer)
+    file_name = 'LCOH_Multi_Year.xlsx'
+    excel_path = os.path.join(directory, file_name)
+    # Criando um ExcelWriter para poder escrever múltiplas sheets
+
+    with pd.ExcelWriter(excel_path, engine='openpyxl') as writer:
+        # Chamar a função write_to_sheet para cada ano necessário
+        write_to_sheet('Present-Storage', writer)  # Ajuste conforme o ano presente real, se necessário
+        write_to_sheet('2030-Storage', writer)
+        write_to_sheet('2050-Storage', writer)
 
 def wh2(pot, energy1kg, nome,cf):
     aep = pot*24*365*0.913 # 91.3% Fator de capacidade eletrolisadores

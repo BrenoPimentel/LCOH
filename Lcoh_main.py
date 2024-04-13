@@ -1,7 +1,7 @@
 import numpy as np 
 import matplotlib.pyplot as plt 
 from classes import Energia, Eletrolisador
-from functions import plot_graph, write_txt, wh2, wh2_no_storage, lcoh, write_to_sheet
+from functions import plot_graph, write_txt, wh2, wh2_no_storage, lcoh, write_excel
 
 
 def parameters_present():
@@ -413,7 +413,9 @@ def calculate_with_storage(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnsho
           lcoh_soec_pv, lcoh_soec_WindOnshore, lcoh_soec_WindOffshore, lcoh_soec_nuclear,
           lcoh_aem_pv, lcoh_aem_WindOnshore, lcoh_aem_WindOffshore, lcoh_aem_nuclear, year_storage)
     
-    write_to_sheet(year_storage)
+    write_excel()
+
+    #write_to_sheet(year_storage)
 
 def calculate_no_storage(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnshore, opex_WindOnshore, cf_WindOnshore,
             capex_WindOffshore, opex_WindOffshore, cf_WindOffshore, capex_nuclear, opex_nuclear, cf_nuclear,
@@ -548,7 +550,7 @@ def calculate_no_storage(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnshore
           lcoh_no_storage_soec_pv, lcoh_no_storage_soec_WindOnshore, lcoh_no_storage_soec_WindOffshore, lcoh_no_storage_soec_nuclear,
           lcoh_no_storage_aem_pv, lcoh_no_storage_aem_WindOnshore, lcoh_no_storage_aem_WindOffshore, lcoh_no_storage_aem_nuclear, year_no_storage)
     
-    write_to_sheet(year_no_storage)
+    #write_to_sheet(year_no_storage)
     
     #write_excel()
 

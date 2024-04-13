@@ -110,7 +110,8 @@ def write_txt(lcoh_pem_pv, lcoh_pem_WindOnshore, lcoh_pem_WindOffshore, lcoh_pem
     except Exception as e:
         print('Error: ' + str(e))
 
-def write_to_sheet(year, writer):
+# def write_to_sheet(year, writer)
+def write_to_sheet(year):
     file_path = (f'lcoh-txt/LCOH-{year}.txt')
     data = {'Technology': [], 'LCOH': []}
 
@@ -127,45 +128,46 @@ def write_to_sheet(year, writer):
     # Convertendo o dicionário para DataFrame
     df = pd.DataFrame(data)
     # Escrevendo o DataFrame no Excel, em uma sheet específica para o ano
-    df.to_excel(writer, sheet_name=str(year), index=False)
+    #df.to_excel(writer, sheet_name=str(year), index=False)
+    excel_path = (f'excel_file/LCOH-{year}.xlsx')
+    df.to_excel(excel_path, index=False)
+    # # Abrindo a sheet recém-criada para aplicar a formatação
+    # #workbook = writer.book
+    # worksheet = writer.book[year]
 
-    # Abrindo a sheet recém-criada para aplicar a formatação
-    #workbook = writer.book
-    worksheet = writer.book[year]
+    # # Centralizando os dados em todas as células da planilha
+    # for row in worksheet.iter_rows():
+    #     for cell in row:
+    #         cell.alignment = Alignment(horizontal='center', vertical='center')
 
-    # Centralizando os dados em todas as células da planilha
-    for row in worksheet.iter_rows():
-        for cell in row:
-            cell.alignment = Alignment(horizontal='center', vertical='center')
+    # for column in worksheet.columns:
+    #     max_length = 0
+    #     column_letter = get_column_letter(column[0].column)  # Obtém a letra da coluna
+    #     for cell in column:
+    #         try:
+    #             if len(str(cell.value)) > max_length:
+    #                 max_length = len(str(cell.value))
+    #         except:
+    #             pass
+    #     adjusted_width = (max_length + 2) * 1.2  # Fator de ajuste para garantir espaço extra
+    #     worksheet.column_dimensions[column_letter].width = adjusted_width
 
-    for column in worksheet.columns:
-        max_length = 0
-        column_letter = get_column_letter(column[0].column)  # Obtém a letra da coluna
-        for cell in column:
-            try:
-                if len(str(cell.value)) > max_length:
-                    max_length = len(str(cell.value))
-            except:
-                pass
-        adjusted_width = (max_length + 2) * 1.2  # Fator de ajuste para garantir espaço extra
-        worksheet.column_dimensions[column_letter].width = adjusted_width
-
-def write_excel():
+#def write_excel():
     # Caminho do arquivo Excel final
-    directory = 'C:\\Users\\breno\\Documents\\python_codes\\IC_main\\excel_file'
+    # directory = 'C:\\Users\\breno\\Documents\\python_codes\\IC_main\\excel_file'
 
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+    # if not os.path.exists(directory):
+    #     os.makedirs(directory)
 
-    file_name = 'LCOH_Multi_Year.xlsx'
-    excel_path = os.path.join(directory, file_name)
-    # Criando um ExcelWriter para poder escrever múltiplas sheets
+    # file_name = 'LCOH_Multi_Year.xlsx'
+    # excel_path = os.path.join(directory, file_name)
+    # # Criando um ExcelWriter para poder escrever múltiplas sheets
 
-    with pd.ExcelWriter(excel_path, engine='openpyxl') as writer:
-        # Chamar a função write_to_sheet para cada ano necessário
-        write_to_sheet('present', writer)  # Ajuste conforme o ano presente real, se necessário
-        write_to_sheet('2030', writer)
-        write_to_sheet('2050', writer)
+    # with pd.ExcelWriter(excel_path, engine='openpyxl') as writer:
+    #     # Chamar a função write_to_sheet para cada ano necessário
+    #     write_to_sheet('Present', writer)  # Ajuste conforme o ano presente real, se necessário
+    #     write_to_sheet('2030', writer)
+    #     write_to_sheet('2050', writer)
 
 def wh2(pot, energy1kg, nome,cf):
     aep = pot*24*365*0.913 # 91.3% Fator de capacidade eletrolisadores
@@ -179,7 +181,7 @@ def wh2_no_storage(pot, energy1kg, nome, cf):
     aep = pot*24*365*0.913*cf # 91.3% Fator de capacidade eletrolisadores
     wh2_no_storage = aep/energy1kg
     print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
-    print(f'{nome} WH2: {wh2:.2f} kg')
+    print(f'{nome} WH2: {wh2_no_storage:.2f} kg')
     print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
     return wh2_no_storage
 

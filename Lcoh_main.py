@@ -1,14 +1,14 @@
 import numpy as np 
 import matplotlib.pyplot as plt 
 from classes import Energia, Eletrolisador
-from functions import plot_graph, write_txt, wh2, wh2_no_storage, lcoh, write_excel
+from functions import plot_graph, write_txt, wh2, wh2_no_storage, lcoh, write_to_sheet
 
 
 def parameters_present():
     e = Energia('a',0,0,0)
     t = e.t
     wacc = 8/100
-    year_storage = 'present-Storage'
+    year_storage = 'Present-Storage'
     year_no_storage = 'Present-No-Storage'
     ########### Energia ################
     ### custos energias
@@ -88,6 +88,13 @@ def parameters_present():
             capex_alk, opex_alk, pot_alk, h2_alk, FlowRate_alk, ef_alk, alk_energy_prod1kg, lifetime_alk, bar_alk,
             capex_soec, opex_soec, pot_soec, h2_soec, FlowRate_soec, ef_soec, soec_energy_prod1kg, lifetime_soec, bar_soec,
             capex_aem, nao_utilizado_opex, pot_aem, h2_aem, FlowRate_aem, ef_aem, aem_energy_prod1kg, lifetime_aem, bar_aem, year_storage)
+
+    calculate_no_storage(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnshore, opex_WindOnshore, cf_WindOnshore,
+            capex_WindOffshore, opex_WindOffshore, cf_WindOffshore, capex_nuclear, opex_nuclear, cf_nuclear,
+            capex_pem, opex_pem, pot_pem, h2_pem, FlowRate_pem, ef_pem, pem_energy_prod1kg, lifetime_pem, bar_pem,
+            capex_alk, opex_alk, pot_alk, h2_alk, FlowRate_alk, ef_alk, alk_energy_prod1kg, lifetime_alk, bar_alk,
+            capex_soec, opex_soec, pot_soec, h2_soec, FlowRate_soec, ef_soec, soec_energy_prod1kg, lifetime_soec, bar_soec,
+            capex_aem, nao_utilizado_opex, pot_aem, h2_aem, FlowRate_aem, ef_aem, aem_energy_prod1kg, lifetime_aem, bar_aem, year_no_storage)
 
 def parameters_2030():
     e = Energia('a',0,0,0)
@@ -173,6 +180,13 @@ def parameters_2030():
             capex_alk, opex_alk, pot_alk, h2_alk, FlowRate_alk, ef_alk, alk_energy_prod1kg, lifetime_alk, bar_alk,
             capex_soec, opex_soec, pot_soec, h2_soec, FlowRate_soec, ef_soec, soec_energy_prod1kg, lifetime_soec, bar_soec,
             capex_aem, nao_utilizado_opex, pot_aem, h2_aem, FlowRate_aem, ef_aem, aem_energy_prod1kg, lifetime_aem, bar_aem, year_storage)
+    
+    calculate_no_storage(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnshore, opex_WindOnshore, cf_WindOnshore,
+            capex_WindOffshore, opex_WindOffshore, cf_WindOffshore, capex_nuclear, opex_nuclear, cf_nuclear,
+            capex_pem, opex_pem, pot_pem, h2_pem, FlowRate_pem, ef_pem, pem_energy_prod1kg, lifetime_pem, bar_pem,
+            capex_alk, opex_alk, pot_alk, h2_alk, FlowRate_alk, ef_alk, alk_energy_prod1kg, lifetime_alk, bar_alk,
+            capex_soec, opex_soec, pot_soec, h2_soec, FlowRate_soec, ef_soec, soec_energy_prod1kg, lifetime_soec, bar_soec,
+            capex_aem, nao_utilizado_opex, pot_aem, h2_aem, FlowRate_aem, ef_aem, aem_energy_prod1kg, lifetime_aem, bar_aem, year_no_storage)
 
 def parameters_2050():
     e = Energia('a',0,0,0)
@@ -258,6 +272,13 @@ def parameters_2050():
             capex_alk, opex_alk, pot_alk, h2_alk, FlowRate_alk, ef_alk, alk_energy_prod1kg, lifetime_alk, bar_alk,
             capex_soec, opex_soec, pot_soec, h2_soec, FlowRate_soec, ef_soec, soec_energy_prod1kg, lifetime_soec, bar_soec,
             capex_aem, nao_utilizado_opex, pot_aem, h2_aem, FlowRate_aem, ef_aem, aem_energy_prod1kg, lifetime_aem, bar_aem, year_storage)
+    
+    calculate_no_storage(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnshore, opex_WindOnshore, cf_WindOnshore,
+            capex_WindOffshore, opex_WindOffshore, cf_WindOffshore, capex_nuclear, opex_nuclear, cf_nuclear,
+            capex_pem, opex_pem, pot_pem, h2_pem, FlowRate_pem, ef_pem, pem_energy_prod1kg, lifetime_pem, bar_pem,
+            capex_alk, opex_alk, pot_alk, h2_alk, FlowRate_alk, ef_alk, alk_energy_prod1kg, lifetime_alk, bar_alk,
+            capex_soec, opex_soec, pot_soec, h2_soec, FlowRate_soec, ef_soec, soec_energy_prod1kg, lifetime_soec, bar_soec,
+            capex_aem, nao_utilizado_opex, pot_aem, h2_aem, FlowRate_aem, ef_aem, aem_energy_prod1kg, lifetime_aem, bar_aem, year_no_storage)
 
 def calculate_with_storage(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnshore, opex_WindOnshore, cf_WindOnshore,
             capex_WindOffshore, opex_WindOffshore, cf_WindOffshore, capex_nuclear, opex_nuclear, cf_nuclear,
@@ -392,14 +413,14 @@ def calculate_with_storage(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnsho
           lcoh_soec_pv, lcoh_soec_WindOnshore, lcoh_soec_WindOffshore, lcoh_soec_nuclear,
           lcoh_aem_pv, lcoh_aem_WindOnshore, lcoh_aem_WindOffshore, lcoh_aem_nuclear, year_storage)
     
-    write_excel()
+    write_to_sheet(year_storage)
 
 def calculate_no_storage(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnshore, opex_WindOnshore, cf_WindOnshore,
             capex_WindOffshore, opex_WindOffshore, cf_WindOffshore, capex_nuclear, opex_nuclear, cf_nuclear,
             capex_pem, opex_pem, pot_pem, h2_pem, FlowRate_pem, ef_pem, pem_energy_prod1kg, lifetime_pem, bar_pem,
             capex_alk, opex_alk, pot_alk, h2_alk, FlowRate_alk, ef_alk, alk_energy_prod1kg, lifetime_alk, bar_alk,
             capex_soec, opex_soec, pot_soec, h2_soec, FlowRate_soec, ef_soec, soec_energy_prod1kg, lifetime_soec, bar_soec,
-            capex_aem, nao_utilizado_opex, pot_aem, h2_aem, FlowRate_aem, ef_aem, aem_energy_prod1kg, lifetime_aem, bar_aem, year):
+            capex_aem, nao_utilizado_opex, pot_aem, h2_aem, FlowRate_aem, ef_aem, aem_energy_prod1kg, lifetime_aem, bar_aem, year_no_storage):
     
     solar = Energia('Solar', capex_sol, opex_sol, cf_sol)
     WindOnshore = Energia('WindOnshore', capex_WindOnshore, opex_WindOnshore, cf_WindOnshore)
@@ -520,14 +541,16 @@ def calculate_no_storage(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnshore
 
 
     plot_graph(lcoh_no_storage_pem_pv, lcoh_no_storage_pem_WindOnshore, lcoh_no_storage_pem_WindOffshore, lcoh_no_storage_pem_nuclear, lcoh_no_storage_alk_pv, lcoh_no_storage_alk_WindOnshore,lcoh_no_storage_alk_WindOffshore, lcoh_no_storage_alk_nuclear, 
-               lcoh_no_storage_soec_pv, lcoh_no_storage_soec_WindOnshore, lcoh_no_storage_soec_WindOffshore, lcoh_no_storage_soec_nuclear, lcoh_no_storage_aem_pv, lcoh_no_storage_aem_WindOnshore, lcoh_no_storage_aem_WindOffshore, lcoh_no_storage_aem_nuclear, year)
+               lcoh_no_storage_soec_pv, lcoh_no_storage_soec_WindOnshore, lcoh_no_storage_soec_WindOffshore, lcoh_no_storage_soec_nuclear, lcoh_no_storage_aem_pv, lcoh_no_storage_aem_WindOnshore, lcoh_no_storage_aem_WindOffshore, lcoh_no_storage_aem_nuclear, year_no_storage)
     
     write_txt(lcoh_no_storage_pem_pv, lcoh_no_storage_pem_WindOnshore, lcoh_no_storage_pem_WindOffshore, lcoh_no_storage_pem_nuclear,
           lcoh_no_storage_alk_pv, lcoh_no_storage_alk_WindOnshore, lcoh_no_storage_alk_WindOffshore, lcoh_no_storage_alk_nuclear,
           lcoh_no_storage_soec_pv, lcoh_no_storage_soec_WindOnshore, lcoh_no_storage_soec_WindOffshore, lcoh_no_storage_soec_nuclear,
-          lcoh_no_storage_aem_pv, lcoh_no_storage_aem_WindOnshore, lcoh_no_storage_aem_WindOffshore, lcoh_no_storage_aem_nuclear, year)
+          lcoh_no_storage_aem_pv, lcoh_no_storage_aem_WindOnshore, lcoh_no_storage_aem_WindOffshore, lcoh_no_storage_aem_nuclear, year_no_storage)
     
-    write_excel()
+    write_to_sheet(year_no_storage)
+    
+    #write_excel()
 
 def main():
     parameters_present()

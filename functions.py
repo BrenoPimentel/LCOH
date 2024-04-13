@@ -49,7 +49,7 @@ def plot_graph(lcoh_pem_pv, lcoh_pem_WindOnshore ,lcoh_pem_WindOffshore, lcoh_pe
 
     plt.title(f'LCOH por Tecnologia de Eletrolisador e Fonte de Energia - {year}', fontsize=16, fontweight='bold')
 
-    ax.grid(True, linestyle='--')
+    # ax.grid(True, linestyle='--')
     
     ax.set_yticks(np.arange(0, max(max(custo_pem), max(custo_alk), max(custo_soec), max(custo_aem)) + 1.25, 1.25))
 
@@ -108,7 +108,7 @@ def write_txt(lcoh_pem_pv, lcoh_pem_WindOnshore, lcoh_pem_WindOffshore, lcoh_pem
                     arquivo.write('\n')
 
     except Exception as e:
-        print('Error: ' + str(e))
+        print('Errorouuuuuuu: ' + str(e))
 
 def write_to_sheet(year, writer):
     file_path = (f'lcoh-txt/LCOH-{year}.txt')

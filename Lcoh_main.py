@@ -11,35 +11,35 @@ def parameters_present_conservative():
     year_storage = 'Present-Storage'
     year_no_storage = 'Present-No-Storage'
 
-    capex_battery = 73500
-    opex_battery = 500/73500
+    capex_battery = 6000*0.2
+    opex_battery = 80/6000
 
     ########### Energia ################
     ### custos energias
     # Solar
-    capex_sol = 320*0.2 # USD/kW
-    opex_sol = 0.02 # %
-    cf_sol = 0.25
+    capex_sol = 4250*0.2 # USD/kW - EPE 2021
+    opex_sol = 55/4250 # % - EPE 2021
+    cf_sol = 0.20 # Atualizar
 
     # Wind Onshore
-    capex_WindOnshore = 450*0.2 # USD/kW - EPE
-    opex_WindOnshore = 90/capex_WindOnshore # %/ano 0.2
-    cf_WindOnshore = 0.4
+    capex_WindOnshore = 4750*0.2 # USD/kW - - EPE 2021
+    opex_WindOnshore = 70/4750 # %/ano - EPE 2021
+    cf_WindOnshore = 0.34 # Atualizar
     
     # wind offshore
-    capex_WindOffshore = 1225*0.2 # USD/kW - EPE
-    opex_WindOffshore = 0.04 # %
-    cf_WindOffshore = 0.47
+    capex_WindOffshore = 15700.5*0.2 # USD/kW - EPE
+    opex_WindOffshore = 375/15700 # % - EPE 2021
+    cf_WindOffshore = 0.4  ## Atualizar 
     
     # Nuclear
-    capex_nuclear = 0*0.2
-    opex_nuclear = 0.013
+    capex_nuclear = 50000*0.2 # - EPE 2021
+    opex_nuclear = 0.02 # Aproximado - EPE 2021
     cf_nuclear = 1 
 
     ######### Eletrolisador ############
     ### Custos e parametros
     # PEM parametros
-    capex_pem = 1000 # USD/kW
+    capex_pem = 1300 # USD/kW - IEA 2020
     opex_pem = 0.02 # %
 
     pot_pem = 988.68 # kW
@@ -47,11 +47,11 @@ def parameters_present_conservative():
     FlowRate_pem = 200 # Nm3/h
     ef_pem = 0
     pem_energy_prod1kg = 55*1.01 # kWh/kg
-    lifetime_pem = 80000 # h IEA
+    lifetime_pem = 50000 # h IRENA
     bar_pem = 30
 
     # Alkalino parametros
-    capex_alk = 650 # $/kW
+    capex_alk = 800 # $/kW - IEA 2020
     opex_alk = 0.02
     
     pot_alk = 1000 # kW
@@ -63,7 +63,7 @@ def parameters_present_conservative():
     bar_alk = 30
 
     # Parametros SOEC
-    capex_soec = 1800 # $/kW
+    capex_soec = 4000 # $/kW - IEA 2020
     opex_soec = 0.02 # %
 
     pot_soec = 1100 # kW
@@ -71,11 +71,11 @@ def parameters_present_conservative():
     FlowRate_soec = h2_soec/0.08988
     soec_energy_prod1kg = 39.4 + 39.4*0.1 # kWh/kg
     ef_soec = 0
-    lifetime_soec = 50000 # h IEA
+    lifetime_soec = 30000 # h IEA
     bar_soec = 1
 
     # Parametros AEM
-    capex_aem = (469.13+258.02) # $/kW
+    capex_aem = (469.13+258.02) # $/kW - Atual
     nao_utilizado_opex = 1
 
     pot_aem = 1000 # kW
@@ -119,7 +119,7 @@ def parameters_2030_conservative():
 
     # Wind Onshore
     capex_WindOnshore = 4500*0.2 # USD/kW - EPE
-    opex_WindOnshore = 90/capex_WindOnshore # %/ano 0.2
+    opex_WindOnshore = 90/4500 # %/ano 0.2
     cf_WindOnshore = 0.4
     
     # wind offshore
@@ -215,7 +215,7 @@ def parameters_2050_conservative():
 
     # Wind Onshore
     capex_WindOnshore = 45000*0.2 # USD/kW - EPE
-    opex_WindOnshore = 90/capex_WindOnshore # %/ano 0.2
+    opex_WindOnshore = 90/45000 # %/ano 0.2
     cf_WindOnshore = 0.4
     
     # wind offshore
@@ -425,9 +425,6 @@ def calculate_with_storage(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnsho
           lcoh_soec_pv, lcoh_soec_WindOnshore, lcoh_soec_WindOffshore, lcoh_soec_nuclear,
           lcoh_aem_pv, lcoh_aem_WindOnshore, lcoh_aem_WindOffshore, lcoh_aem_nuclear, year_storage)
     
-    write_excel()
-
-
 def calculate_no_storage(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnshore, opex_WindOnshore, cf_WindOnshore,
             capex_WindOffshore, opex_WindOffshore, cf_WindOffshore, capex_nuclear, opex_nuclear, cf_nuclear,
             capex_pem, opex_pem, pot_pem, h2_pem, FlowRate_pem, ef_pem, pem_energy_prod1kg, lifetime_pem, bar_pem,
@@ -568,6 +565,7 @@ def main():
     parameters_present_conservative()
     parameters_2030_conservative()
     parameters_2050_conservative()
+    write_excel()
 
 if __name__ == '__main__':
     main()

@@ -6,7 +6,7 @@ from openpyxl.styles import Alignment
 from openpyxl.utils import get_column_letter
 
 def plot_graph(lcoh_pem_pv, lcoh_pem_WindOnshore ,lcoh_pem_WindOffshore, lcoh_pem_nuclear, lcoh_alk_pv, lcoh_alk_WindOnshore, lcoh_alk_WindOffshore, lcoh_alk_nuclear, 
-               lcoh_soec_pv,lcoh_soec_WindOnshore, lcoh_soec_WindOffshore, lcoh_soec_nuclear, lcoh_aem_pv, lcoh_aem_WindOnshore, lcoh_aem_WindOffshore, lcoh_aem_nuclear, year):
+               lcoh_soec_pv,lcoh_soec_WindOnshore, lcoh_soec_WindOffshore, lcoh_soec_nuclear, lcoh_aem_pv, lcoh_aem_WindOnshore, lcoh_aem_WindOffshore, lcoh_aem_nuclear, name):
     # Dados
     eletrolisadores = ['PEM', 'ALK', 'SOEC', 'AEM']
     tecnologias = ['Solar', 'Eólica OnShore', 'Eólica OffShore', 'Nuclear']
@@ -47,7 +47,7 @@ def plot_graph(lcoh_pem_pv, lcoh_pem_WindOnshore ,lcoh_pem_WindOffshore, lcoh_pe
     ax.set_xticklabels(tecnologias)
     ax.legend()
 
-    plt.title(f'LCOH por Tecnologia de Eletrolisador e Fonte de Energia \n - {year}', fontsize=16, fontweight='bold')
+    plt.title(f'LCOH por Tecnologia de Eletrolisador e Fonte de Energia \n - {name}', fontsize=16, fontweight='bold')
 
     ax.grid(True, linestyle='--')
     
@@ -64,13 +64,13 @@ def plot_graph(lcoh_pem_pv, lcoh_pem_WindOnshore ,lcoh_pem_WindOffshore, lcoh_pe
     if not os.path.exists(fig_path):
         os.makedirs(fig_path)
 
-    plt.savefig(os.path.join(fig_path, f'LCOH-{year}.png'))
+    plt.savefig(os.path.join(fig_path, f'LCOH-{name}.png'))
     # Mostrar gráfico
 
 def write_txt(lcoh_pem_pv, lcoh_pem_WindOnshore, lcoh_pem_WindOffshore, lcoh_pem_nuclear,
               lcoh_alk_pv, lcoh_alk_WindOnshore, lcoh_alk_WindOffshore, lcoh_alk_nuclear,
               lcoh_soec_pv, lcoh_soec_WindOnshore, lcoh_soec_WindOffshore, lcoh_soec_nuclear,
-              lcoh_aem_pv, lcoh_aem_WindOnshore, lcoh_aem_WindOffshore, lcoh_aem_nuclear, year):
+              lcoh_aem_pv, lcoh_aem_WindOnshore, lcoh_aem_WindOffshore, lcoh_aem_nuclear, name_file):
     
     lcoh_dict = {
         'Solar PEM': lcoh_pem_pv,
@@ -92,7 +92,7 @@ def write_txt(lcoh_pem_pv, lcoh_pem_WindOnshore, lcoh_pem_WindOffshore, lcoh_pem
     }
 
     output_path = 'C:\\Users\\breno\\Documents\\python_codes\\IC_main\\lcoh-txt'  # Caminho da pasta de destino
-    file_name = f'LCOH-{year}.txt'  # Nome do arquivo
+    file_name = f'LCOH-{name_file}.txt'  # Nome do arquivo
     file_path = os.path.join(output_path, file_name)
     
     if not os.path.exists(output_path):
@@ -110,8 +110,8 @@ def write_txt(lcoh_pem_pv, lcoh_pem_WindOnshore, lcoh_pem_WindOffshore, lcoh_pem
     except Exception as e:
         print('Errorouuuuuuu: ' + str(e))
 
-def write_to_sheet(year, writer):
-    file_path = (f'lcoh-txt/LCOH-{year}.txt')
+def write_to_sheet(sheet_name, txt_file_name, writer):
+    file_path = (f'lcoh-txt/LCOH-{txt_file_name}.txt')
     data = {'Technology': [], 'LCOH': []}
 
     # Lendo o arquivo txt e preenchendo o dicionário
@@ -127,11 +127,11 @@ def write_to_sheet(year, writer):
     # Convertendo o dicionário para DataFrame
     df = pd.DataFrame(data)
     # Escrevendo o DataFrame no Excel, em uma sheet específica para o ano
-    df.to_excel(writer, sheet_name=str(year), index=False)
+    df.to_excel(writer, sheet_name=str(sheet_name), index=False)
 
     # Abrindo a sheet recém-criada para aplicar a formatação
     #workbook = writer.book
-    worksheet = writer.book[year]
+    worksheet = writer.book[sheet_name]
 
     # Centralizando os dados em todas as células da planilha
     for row in worksheet.iter_rows():
@@ -150,44 +150,23 @@ def write_to_sheet(year, writer):
         adjusted_width = (max_length + 2) * 1.2  # Fator de ajuste para garantir espaço extra
         worksheet.column_dimensions[column_letter].width = adjusted_width
 
-def write_excel():
+def write_excel(file_name, txt_file_name, sheet_name):
     #Caminho do arquivo Excel final
     directory = 'C:\\Users\\breno\\Documents\\python_codes\\IC_main\\excel_file'
 
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-    file_LCOH_Present_Storage = 'LCOH_Present-Storage.xlsx'
-    file_LCOH_2030_Storage = 'LCOH_2030-Storage.xlsx'
-    file_LCOH_2050_Storage = 'LCOH_2050-Storage.xlsx'
-
-    excel_path_LCOH_Present_Storage = os.path.join(directory, file_LCOH_Present_Storage)
-    excel_path_LCOH_2030_Storage = os.path.join(directory, file_LCOH_2030_Storage)
-    excel_path_LCOH_2050_Storage = os.path.join(directory, file_LCOH_2050_Storage)
+    excel_path = os.path.join(directory, f'{file_name}.xlsx')
 
     # Criando um ExcelWriter para poder escrever múltiplas sheets
-
-    with pd.ExcelWriter(excel_path_LCOH_Present_Storage, engine='openpyxl') as writer:
+    with pd.ExcelWriter(excel_path, engine='openpyxl') as writer:
         # Chamar a função write_to_sheet para cada ano necessário
         # write_to_sheet first argument is the .txt file name. 
         # Change to pessimist, convservative optmist 
-        write_to_sheet('Present-Storage', writer)  # First argument is the file's name and sheet name
-        write_to_sheet('2030-Storage', writer)
-        write_to_sheet('2050-Storage', writer)
+        write_to_sheet(sheet_name, txt_file_name, writer)
 
-    with pd.ExcelWriter(excel_path_LCOH_2030_Storage, engine='openpyxl') as writer:
-        # Chamar a função write_to_sheet para cada ano necessário
-        write_to_sheet('Present-Storage', writer)  # Ajuste conforme o ano presente real, se necessário
-        write_to_sheet('2030-Storage', writer)
-        write_to_sheet('2050-Storage', writer)
-
-    with pd.ExcelWriter(excel_path_LCOH_2050_Storage, engine='openpyxl') as writer:
-        # Chamar a função write_to_sheet para cada ano necessário
-        write_to_sheet('Present-Storage', writer)  # Ajuste conforme o ano presente real, se necessário
-        write_to_sheet('2030-Storage', writer)
-        write_to_sheet('2050-Storage', writer)
-
-def wh2(pot, energy1kg, nome,cf):
+def wh2(pot, energy1kg, nome, cf):
     aep = pot*24*365*0.913 # 91.3% Fator de capacidade eletrolisadores
     wh2 = aep/energy1kg
     print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxx')

@@ -13,8 +13,8 @@ WindOnshore SOEC: 25.20 $/kg
 WindOffshore SOEC: 33.47 $/kg
 Nuclear SOEC: 18.22 $/kg
 
-Solar AEM: 31.51 $/kg
-WindOnshore AEM: 12.32 $/kg
-WindOffshore AEM: 20.36 $/kg
-Nuclear AEM: 10.85 $/kg
+Solar AEM: 28.43 $/kg
+WindOnshore AEM: 11.05 $/kg
+WindOffshore AEM: 18.95 $/kg
+Nuclear AEM: 10.02 $/kg
 

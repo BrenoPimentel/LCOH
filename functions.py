@@ -24,24 +24,24 @@ def plot_graph(lcoh_pem_pv, lcoh_pem_WindOnshore ,lcoh_pem_WindOffshore, lcoh_pe
     ]  
 
     # Configuração do gráfico
-    barWidth = 0.2
+    barWidth = 0.25
     fig, ax = plt.subplots(figsize=(10, 6)) 
 
     # Posição das barras
     r = np.arange(len(tecnologias))
     r1 = r - barWidth
     r2 = r
-    r3 = r + barWidth
-    r4 = r + 2*barWidth
+    # r3 = r + barWidth
+    r4 = r + 1*barWidth
 
     # Plotagem das barras
     ax.bar(r1, custo_pem, color=cores[0], width=barWidth, label= eletrolisadores[0]) 
     ax.bar(r2, custo_alk, color=cores[1], width=barWidth, label=eletrolisadores[1]) 
-    ax.bar(r3, custo_soec, color=cores[2], width=barWidth, label=eletrolisadores[2]) 
+    #ax.bar(r3, custo_soec, color=cores[2], width=barWidth, label=eletrolisadores[2]) 
     ax.bar(r4, custo_aem, color=cores[3],width=barWidth, label=eletrolisadores[3]) 
 
     # Personalização do gráfico
-    ax.set_xlabel('Tecnologia', fontweight='bold', fontsize=15) 
+    ax.set_xlabel('Fonte de energia', fontweight='bold', fontsize=15) 
     ax.set_ylabel('LCOH ($/kg)', fontweight='bold', fontsize=15) 
     ax.set_xticks(r)
     ax.set_xticklabels(tecnologias)
@@ -51,8 +51,8 @@ def plot_graph(lcoh_pem_pv, lcoh_pem_WindOnshore ,lcoh_pem_WindOffshore, lcoh_pe
 
     ax.grid(True, linestyle='--')
     
-    ax.set_yticks(np.arange(0, max(max(custo_pem), max(custo_alk), max(custo_soec), max(custo_aem)) + 1.25, 1.25))
-
+    #ax.set_yticks(np.arange(0, max(max(custo_pem), max(custo_alk), max(custo_soec), max(custo_aem)) + 1.25, 1.25))
+    ax.set_yticks(np.arange(0, 31, 1.25))
     # Função para fechar o gráfico ao pressionar 'q'
     def press(event):
         if event.key == 'q' or 'Q':

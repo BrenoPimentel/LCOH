@@ -4,10 +4,10 @@ from classes import Energia, Eletrolisador
 from functions import plot_graph, write_txt, wh2, wh2_no_storage, lcoh, write_excel
 
 
-def parameters_present_pessimism():
+def parameters_present_pessimism(parameters):
     e = Energia('a',0,0,0)
     t = e.t
-    wacc = 10/100
+    wacc = (parameters['wacc'])/100
     
     # Nome do arquivo Excel que vai ser criado
     excel_file_name_storage = 'LCOH-2025-Storage-Pessimism'
@@ -27,71 +27,72 @@ def parameters_present_pessimism():
     ########### Energia ################
     ### custos energias
     # Solar
-    capex_sol = 4500*0.2 # USD/kW - EPE Sheet
+    capex_sol = parameters['Energy source']['Solar']['CAPEX']*0.2 # USD/kW - EPE Sheet
+    #capex_sol = 4500*0.2
     opex_sol = 0.02 # % - EPE 2021
-    cf_sol = 0.10 # IRENA 2020
+    cf_sol = parameters['Energy source']['Solar']['Capacity factor'] # IRENA 2020
 
     # Wind Onshore
-    capex_WindOnshore = 5000*0.2 # USD/kW - EPE Sheet
+    capex_WindOnshore = parameters['Energy source']['Wind Onshore']['CAPEX']*0.2 # USD/kW - EPE Sheet
     opex_WindOnshore = 0.015 # %/ano - EPE Sheet
-    cf_WindOnshore = 0.36 # IRENA 2020
+    cf_WindOnshore = parameters['Energy source']['Wind Onshore']['Capacity factor'] # IRENA 2020
     
     # wind offshore
-    capex_WindOffshore = 18375*0.2 # USD/kW - EPE Sheet
+    capex_WindOffshore = parameters['Energy source']['Wind Offshore']['CAPEX']*0.2# USD/kW - EPE Sheet
     opex_WindOffshore = 0.03 # % - EPE Sheet
-    cf_WindOffshore = 0.3  ## Atualizar 
+    cf_WindOffshore = parameters['Energy source']['Wind Offshore']['Capacity factor']  ## Atualizar 
     
     # Nuclear
-    capex_nuclear = 29400*0.2 # - EPE Sheet
+    capex_nuclear = parameters['Energy source']['Nuclear']['CAPEX']*0.2 # - EPE Sheet
     opex_nuclear = 0.02 # Aproximado - EPE Sheet
-    cf_nuclear = 0.98 
+    cf_nuclear = parameters['Energy source']['Nuclear']['Capacity factor'] 
 
     ######### Eletrolisador ############
     ### Custos e parametros
     # PEM parametros
-    capex_pem = 1500 # USD/kW - IEA 2020
+    capex_pem = parameters['Electrolyzer']['PEM']['CAPEX'] # USD/kW - IEA 2020
     opex_pem = 0.02 # %
 
     pot_pem = 988.68 # kW
     h2_pem = 17.976 # kg/h 
     FlowRate_pem = 200 # Nm3/h
-    ef_pem = 0.557
+    ef_pem = parameters['Electrolyzer']['PEM']['Efficiency']
     pem_energy_prod1kg = (0.607/ef_pem)*55 # kWh/kg
     lifetime_pem = 50000 # h IRENA
     bar_pem = 30
 
     # Alkalino parametros
-    capex_alk = 1400 # $/kW - IEA 2020
+    capex_alk = parameters['Electrolyzer']['Alkaline']['CAPEX'] # $/kW - IEA 2020
     opex_alk = 0.02
     
     pot_alk = 1000 # kW
     FlowRate_alk = 200
     h2_alk = FlowRate_alk*0.08988 # kg/h  nao to usando pra nada pois calculamos por fora a energia para produzir 1kg
-    ef_alk = 0.55
+    ef_alk =  parameters['Electrolyzer']['Alkaline']['Efficiency']
     alk_energy_prod1kg = (0.6/ef_alk)*58.75 # kWh/kg (4.8/0.08988) + (4.8/0.08988)*0.1
     lifetime_alk = 80000 # h  Datasheet
     bar_alk = 30
 
     # Parametros SOEC
-    capex_soec = 4200 # $/kW - IEA 2020
+    capex_soec = parameters['Electrolyzer']['SOEC']['CAPEX'] # $/kW - IEA 2020
     opex_soec = 0.02 # %
 
     pot_soec = 1100 # kW
     h2_soec = 24 # kg/h nao to usando pra nada pois calculamos por fora a energia para produzir 1kg
     FlowRate_soec = h2_soec/0.08988
-    ef_soec = 0.707
+    ef_soec = parameters['Electrolyzer']['SOEC']['Efficiency']
     soec_energy_prod1kg = (0.757/ef_soec)*43.34 # kWh/kg 39.4 + 39.4*0.1
     lifetime_soec = 30000 # h IEA
     bar_soec = 1
 
     # Parametros AEM
-    capex_aem = (469.13+258.02) + 1000 #
+    capex_aem = parameters['Electrolyzer']['AEM']['CAPEX'] #
     nao_utilizado_opex = 1
 
-    pot_aem = 1600 # kW
+    pot_aem = 1000 # kW
     FlowRate_aem = 210 # Nm3/h
     h2_aem = 453/24 # kg/h -> So esta sendo utilizado para calcular o opex, pois energia para produzir 1kg eh calculada por fora
-    ef_aem = 0.575 # LHV
+    ef_aem = parameters['Electrolyzer']['AEM']['Efficiency'] # LHV
     aem_energy_prod1kg = (0.625/ef_aem)*53.3 # kWh/kg
     lifetime_aem = 20000 # h - (M. KIM et. al, 2024) - AEM Techno-economic
     bar_aem = 35
@@ -112,10 +113,10 @@ def parameters_present_pessimism():
             capex_aem, nao_utilizado_opex, pot_aem, h2_aem, FlowRate_aem, ef_aem, aem_energy_prod1kg, lifetime_aem, bar_aem,
             excel_file_name_no_storage, txt_name_no_storage, sheet_name_no_storage)
 
-def parameters_present_conservative():
+def parameters_present_conservative(parameters):
     e = Energia('a',0,0,0)
     t = e.t
-    wacc = 8/100
+    wacc = (parameters['wacc'])/100
     
     excel_file_name_storage = 'LCOH-2025-Storage-Conservative'
     excel_file_name_no_storage = 'LCOH-2025-no-Storage'
@@ -131,74 +132,75 @@ def parameters_present_conservative():
     ########### Energia ################
     ### custos energias
     # Solar
-    capex_sol = 4250*0.2 # USD/kW - EPE Sheet
+    capex_sol = parameters['Energy source']['Solar']['CAPEX']*0.2 # USD/kW - EPE Sheet
+    #capex_sol = 4500*0.2
     opex_sol = 0.02 # % - EPE 2021
-    cf_sol = 0.15 # IRENA 2020
+    cf_sol = parameters['Energy source']['Solar']['Capacity factor'] # IRENA 2020
 
     # Wind Onshore
-    capex_WindOnshore = 4750*0.2 # USD/kW - EPE Sheet
+    capex_WindOnshore = parameters['Energy source']['Wind Onshore']['CAPEX']*0.2 # USD/kW - EPE Sheet
     opex_WindOnshore = 0.015 # %/ano - EPE Sheet
-    cf_WindOnshore = 0.39 # IRENA 2020
+    cf_WindOnshore = parameters['Energy source']['Wind Onshore']['Capacity factor'] # IRENA 2020
     
     # wind offshore
-    capex_WindOffshore = 15600.5*0.2 # USD/kW - EPE Sheet
-    opex_WindOffshore = 0.015 # % - EPE Sheet
-    cf_WindOffshore = 0.48  ## Atualizar 
+    capex_WindOffshore = parameters['Energy source']['Wind Offshore']['CAPEX']*0.2# USD/kW - EPE Sheet
+    opex_WindOffshore = 0.03 # % - EPE Sheet
+    cf_WindOffshore = parameters['Energy source']['Wind Offshore']['Capacity factor']  ## Atualizar 
     
     # Nuclear
-    capex_nuclear = 24500*0.2 # - EPE Sheet
+    capex_nuclear = parameters['Energy source']['Nuclear']['CAPEX']*0.2 # - EPE Sheet
     opex_nuclear = 0.02 # Aproximado - EPE Sheet
-    cf_nuclear = 0.98 
+    cf_nuclear = parameters['Energy source']['Nuclear']['Capacity factor'] 
 
     ######### Eletrolisador ############
     ### Custos e parametros
     # PEM parametros
-    capex_pem = 1168 # USD/kW - IEA 2020
+    capex_pem = parameters['Electrolyzer']['PEM']['CAPEX'] # USD/kW - IEA 2020
     opex_pem = 0.02 # %
 
     pot_pem = 988.68 # kW
     h2_pem = 17.976 # kg/h 
     FlowRate_pem = 200 # Nm3/h
-    ef_pem = 0.607
-    pem_energy_prod1kg = 55 # kWh/kg Datasheet considereing BOP
+    ef_pem = parameters['Electrolyzer']['PEM']['Efficiency']
+    pem_energy_prod1kg = (0.607/ef_pem)*55 # kWh/kg
     lifetime_pem = 50000 # h IRENA
     bar_pem = 30
 
     # Alkalino parametros
-    capex_alk = 1140 # $/kW - IEA 2020
+    capex_alk = parameters['Electrolyzer']['Alkaline']['CAPEX'] # $/kW - IEA 2020
     opex_alk = 0.02
     
     pot_alk = 1000 # kW
     FlowRate_alk = 200
     h2_alk = FlowRate_alk*0.08988 # kg/h  nao to usando pra nada pois calculamos por fora a energia para produzir 1kg
-    ef_alk = 0.6
-    alk_energy_prod1kg = 58.75 # kWh/kg (4.8/0.08988) + (4.8/0.08988)*0.1
+    ef_alk =  parameters['Electrolyzer']['Alkaline']['Efficiency']
+    alk_energy_prod1kg = (0.6/ef_alk)*58.75 # kWh/kg (4.8/0.08988) + (4.8/0.08988)*0.1
     lifetime_alk = 80000 # h  Datasheet
     bar_alk = 30
 
     # Parametros SOEC
-    capex_soec = 3000 # $/kW - IEA 2020
+    capex_soec = parameters['Electrolyzer']['SOEC']['CAPEX'] # $/kW - IEA 2020
     opex_soec = 0.02 # %
 
     pot_soec = 1100 # kW
     h2_soec = 24 # kg/h nao to usando pra nada pois calculamos por fora a energia para produzir 1kg
     FlowRate_soec = h2_soec/0.08988
-    ef_soec = 0.757
-    soec_energy_prod1kg = 43.34 # kWh/kg 39.4 + 39.4*0.1
+    ef_soec = parameters['Electrolyzer']['SOEC']['Efficiency']
+    soec_energy_prod1kg = (0.757/ef_soec)*43.34 # kWh/kg 39.4 + 39.4*0.1
     lifetime_soec = 30000 # h IEA
     bar_soec = 1
 
     # Parametros AEM
-    capex_aem = 931 # $/kW - Atual
+    capex_aem = parameters['Electrolyzer']['AEM']['CAPEX'] # $/kW - Atual
     nao_utilizado_opex = 1
 
     pot_aem = 1000 # kW
     FlowRate_aem = 210 # Nm3/h
     h2_aem = 453/24 # kg/h -> So esta sendo utilizado para calcular o opex, pois energia para produzir 1kg eh calculada por fora
-    ef_aem = 0.625 # LHV
-    aem_energy_prod1kg = 53.3 # kWh/kg
+    ef_aem = parameters['Electrolyzer']['AEM']['Efficiency'] # LHV
+    aem_energy_prod1kg = (0.625/ef_aem)*53.3 # kWh/kg
     lifetime_aem = 20000 # h - (M. KIM et. al, 2024) - AEM Techno-economic
-    bar_aem = 30
+    bar_aem = 35
 
 #     calculate_with_storage(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnshore, opex_WindOnshore, cf_WindOnshore,
 #             capex_WindOffshore, opex_WindOffshore, cf_WindOffshore, capex_nuclear, opex_nuclear, cf_nuclear,
@@ -216,10 +218,10 @@ def parameters_present_conservative():
             capex_aem, nao_utilizado_opex, pot_aem, h2_aem, FlowRate_aem, ef_aem, aem_energy_prod1kg, lifetime_aem, bar_aem,
             excel_file_name_no_storage, txt_name_no_storage, sheet_name_no_storage)
 
-def parameters_present_otimism():
+def parameters_present_otimism(parameters):
     e = Energia('a',0,0,0)
     t = e.t
-    wacc = 6/100
+    wacc = (parameters['wacc'])/100
 
     excel_file_name_storage = 'LCOH-2025-Storage-Otimism'
     excel_file_name_no_storage = 'LCOH-2025-no-Storage'
@@ -235,76 +237,75 @@ def parameters_present_otimism():
     ########### Energia ################
     ### custos energias
     # Solar
-    capex_sol = 4000*0.2 # USD/kW - EPE Sheet
+    capex_sol = parameters['Energy source']['Solar']['CAPEX']*0.2 # USD/kW - EPE Sheet
+    #capex_sol = 4500*0.2
     opex_sol = 0.02 # % - EPE 2021
-    cf_sol = 0.205 # IRENA 2020
+    cf_sol = parameters['Energy source']['Solar']['Capacity factor'] # IRENA 2020
 
     # Wind Onshore
-    capex_WindOnshore = 4500*0.2 # USD/kW - EPE Sheet
+    capex_WindOnshore = parameters['Energy source']['Wind Onshore']['CAPEX']*0.2 # USD/kW - EPE Sheet
     opex_WindOnshore = 0.015 # %/ano - EPE Sheet
-    cf_WindOnshore = 0.45 # IRENA 2020
+    cf_WindOnshore = parameters['Energy source']['Wind Onshore']['Capacity factor'] # IRENA 2020
     
     # wind offshore
-    capex_WindOffshore = 13000*0.2 # USD/kW - EPE Sheet
+    capex_WindOffshore = parameters['Energy source']['Wind Offshore']['CAPEX']*0.2# USD/kW - EPE Sheet
     opex_WindOffshore = 0.03 # % - EPE Sheet
-    cf_WindOffshore = 0.60  ## Atualizar 
+    cf_WindOffshore = parameters['Energy source']['Wind Offshore']['Capacity factor']  ## Atualizar 
     
     # Nuclear
-    capex_nuclear = 22000*0.2 # - EPE Sheet
+    capex_nuclear = parameters['Energy source']['Nuclear']['CAPEX']*0.2 # - EPE Sheet
     opex_nuclear = 0.02 # Aproximado - EPE Sheet
-    cf_nuclear = 0.98 
+    cf_nuclear = parameters['Energy source']['Nuclear']['Capacity factor'] 
 
     ######### Eletrolisador ############
     ### Custos e parametros
     # PEM parametros
-    capex_pem = 1000 # USD/kW - IEA 2020
+    capex_pem = parameters['Electrolyzer']['PEM']['CAPEX'] # USD/kW - IEA 2020
     opex_pem = 0.02 # %
 
     pot_pem = 988.68 # kW
     h2_pem = 17.976 # kg/h 
     FlowRate_pem = 200 # Nm3/h
-    ef_pem = 0.657
+    ef_pem = parameters['Electrolyzer']['PEM']['Efficiency']
     pem_energy_prod1kg = (0.607/ef_pem)*55 # kWh/kg
     lifetime_pem = 50000 # h IRENA
     bar_pem = 30
 
     # Alkalino parametros
-    capex_alk = 500 # $/kW - IEA 2020
+    capex_alk = parameters['Electrolyzer']['Alkaline']['CAPEX'] # $/kW - IEA 2020
     opex_alk = 0.02
     
     pot_alk = 1000 # kW
     FlowRate_alk = 200
     h2_alk = FlowRate_alk*0.08988 # kg/h  nao to usando pra nada pois calculamos por fora a energia para produzir 1kg
-    ef_alk = 0.65
+    ef_alk =  parameters['Electrolyzer']['Alkaline']['Efficiency']
     alk_energy_prod1kg = (0.6/ef_alk)*58.75 # kWh/kg (4.8/0.08988) + (4.8/0.08988)*0.1
     lifetime_alk = 80000 # h  Datasheet
     bar_alk = 30
 
     # Parametros SOEC
-    capex_soec = 1800 # $/kW - IEA 2020
+    capex_soec = parameters['Electrolyzer']['SOEC']['CAPEX'] # $/kW - IEA 2020
     opex_soec = 0.02 # %
 
     pot_soec = 1100 # kW
     h2_soec = 24 # kg/h nao to usando pra nada pois calculamos por fora a energia para produzir 1kg
-    FlowRate_soec = h2_soec/0.08988 
-    ef_soec = 0.807
+    FlowRate_soec = h2_soec/0.08988
+    ef_soec = parameters['Electrolyzer']['SOEC']['Efficiency']
     soec_energy_prod1kg = (0.757/ef_soec)*43.34 # kWh/kg 39.4 + 39.4*0.1
     lifetime_soec = 30000 # h IEA
     bar_soec = 1
 
     # Parametros AEM
-    capex_aem = 600 # $/kW - Atual
+    capex_aem = parameters['Electrolyzer']['AEM']['CAPEX'] #
     nao_utilizado_opex = 1
 
     pot_aem = 1000 # kW
     FlowRate_aem = 210 # Nm3/h
     h2_aem = 453/24 # kg/h -> So esta sendo utilizado para calcular o opex, pois energia para produzir 1kg eh calculada por fora
-    ef_aem = 0.625 # LHV
-    aem_energy_prod1kg = 53.3 # kWh/kg
-    ef_aem = 0.675 # LHV
+    ef_aem = parameters['Electrolyzer']['AEM']['Efficiency'] # LHV
     aem_energy_prod1kg = (0.625/ef_aem)*53.3 # kWh/kg
     lifetime_aem = 20000 # h - (M. KIM et. al, 2024) - AEM Techno-economic
-    bar_aem = 30
+    bar_aem = 35
 
 #     calculate_with_storage(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnshore, opex_WindOnshore, cf_WindOnshore,
 #             capex_WindOffshore, opex_WindOffshore, cf_WindOffshore, capex_nuclear, opex_nuclear, cf_nuclear,
@@ -806,9 +807,126 @@ def calculate_no_storage(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnshore
     #write_excel(excel_file_name_no_storage, txt_name_no_storage, sheet_name_no_storage)
 
 def main():
-    parameters_present_pessimism()
-    parameters_present_conservative()
-    parameters_present_otimism()         
+    scenario_pessimistc_2025={
+        'wacc': 10,
+        'Electrolyzer':{
+            'PEM':{
+                'CAPEX': 1500,
+                'Efficiency': 0.557
+            },
+            'Alkaline':{
+                'CAPEX': 1400,
+                'Efficiency': 0.55         
+            },
+            'SOEC':{
+                'CAPEX': 4200,
+                'Efficiency': 0.707
+            },
+            'AEM':{
+                'CAPEX': 1400,
+                'Efficiency': 0.575
+            },
+        },
+        'Energy source':{
+            'Solar':{
+                'CAPEX': 4500,
+                'Capacity factor': 0.1
+            },
+            'Wind Onshore':{
+                'CAPEX': 5000,
+                'Capacity factor': 0.36
+            },
+            'Wind Offshore':{
+                'CAPEX': 18375,
+                'Capacity factor': 0.3
+            },
+            'Nuclear':{
+                'CAPEX': 29400,
+                'Capacity factor': 0.98
+            },
+        },
+    }
+    scenario_conservative_2025={
+        'wacc': 8,
+        'Electrolyzer':{
+            'PEM':{
+                'CAPEX': 1168,
+                'Efficiency': 0.607
+            },
+            'Alkaline':{
+                'CAPEX': 1140,
+                'Efficiency': 0.6         
+            },
+            'SOEC':{
+                'CAPEX': 3000,
+                'Efficiency': 0.757
+            },
+            'AEM':{
+                'CAPEX': 931,
+                'Efficiency': 0.625
+            },
+        },
+        'Energy source':{
+            'Solar':{
+                'CAPEX': 4250,
+                'Capacity factor': 0.15
+            },
+            'Wind Onshore':{
+                'CAPEX': 4750,
+                'Capacity factor': 0.39
+            },
+            'Wind Offshore':{
+                'CAPEX': 15600,
+                'Capacity factor': 0.48
+            },
+            'Nuclear':{
+                'CAPEX': 24500,
+                'Capacity factor': 0.98
+            },
+        },
+    }
+    scenario_otimistic_2025={
+        'wacc': 6,
+        'Electrolyzer':{
+            'PEM':{
+                'CAPEX': 1000,
+                'Efficiency': 0.657
+            },
+            'Alkaline':{
+                'CAPEX': 500,
+                'Efficiency': 0.65         
+            },
+            'SOEC':{
+                'CAPEX': 1800,
+                'Efficiency': 0.807
+            },
+            'AEM':{
+                'CAPEX': 600,
+                'Efficiency': 0.675
+            },
+        },
+        'Energy source':{
+            'Solar':{
+                'CAPEX': 4000,
+                'Capacity factor': 0.205
+            },
+            'Wind Onshore':{
+                'CAPEX': 4500,
+                'Capacity factor': 0.45
+            },
+            'Wind Offshore':{
+                'CAPEX': 13000,
+                'Capacity factor': 0.6
+            },
+            'Nuclear':{
+                'CAPEX': 22,
+                'Capacity factor': 0.98
+            },
+        },
+    }
+    parameters_present_pessimism(scenario_pessimistc_2025)
+    parameters_present_conservative(scenario_conservative_2025)
+    parameters_present_otimism(scenario_otimistic_2025)         
     parameters_2030_conservative()
     parameters_2050_conservative()
     # write_excel()

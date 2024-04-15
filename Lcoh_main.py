@@ -55,46 +55,46 @@ def parameters_present_pessimism():
     pot_pem = 988.68 # kW
     h2_pem = 17.976 # kg/h 
     FlowRate_pem = 200 # Nm3/h
-    ef_pem = 0
-    pem_energy_prod1kg = 55*1.01 # kWh/kg
+    ef_pem = 0.557
+    pem_energy_prod1kg = (0.607/ef_pem)*55 # kWh/kg
     lifetime_pem = 50000 # h IRENA
     bar_pem = 30
 
     # Alkalino parametros
-    capex_alk = 1000 # $/kW - IEA 2020
+    capex_alk = 1400 # $/kW - IEA 2020
     opex_alk = 0.02
     
     pot_alk = 1000 # kW
     FlowRate_alk = 200
     h2_alk = FlowRate_alk*0.08988 # kg/h  nao to usando pra nada pois calculamos por fora a energia para produzir 1kg
-    ef_alk = 0
-    alk_energy_prod1kg = (4.8/0.08988) + (4.8/0.08988)*0.1 # kWh/kg
+    ef_alk = 0.55
+    alk_energy_prod1kg = (0.6/ef_alk)*58.75 # kWh/kg (4.8/0.08988) + (4.8/0.08988)*0.1
     lifetime_alk = 80000 # h  Datasheet
     bar_alk = 30
 
     # Parametros SOEC
-    capex_soec = 4400 # $/kW - IEA 2020
+    capex_soec = 4200 # $/kW - IEA 2020
     opex_soec = 0.02 # %
 
     pot_soec = 1100 # kW
     h2_soec = 24 # kg/h nao to usando pra nada pois calculamos por fora a energia para produzir 1kg
     FlowRate_soec = h2_soec/0.08988
-    soec_energy_prod1kg = 39.4 + 39.4*0.1 # kWh/kg
-    ef_soec = 0
+    ef_soec = 0.707
+    soec_energy_prod1kg = (0.757/ef_soec)*43.34 # kWh/kg 39.4 + 39.4*0.1
     lifetime_soec = 30000 # h IEA
     bar_soec = 1
 
     # Parametros AEM
-    capex_aem = (469.13+258.02) + 300 #
+    capex_aem = (469.13+258.02) + 1000 #
     nao_utilizado_opex = 1
 
-    pot_aem = 1000 # kW
+    pot_aem = 1600 # kW
     FlowRate_aem = 210 # Nm3/h
     h2_aem = 453/24 # kg/h -> So esta sendo utilizado para calcular o opex, pois energia para produzir 1kg eh calculada por fora
-    aem_energy_prod1kg = 53.3 # kWh/kg
-    ef_aem = 0.625 # LHV
+    ef_aem = 0.575 # LHV
+    aem_energy_prod1kg = (0.625/ef_aem)*53.3 # kWh/kg
     lifetime_aem = 20000 # h - (M. KIM et. al, 2024) - AEM Techno-economic
-    bar_aem = 30
+    bar_aem = 35
 
 #     calculate_with_storage(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnshore, opex_WindOnshore, cf_WindOnshore,
 #             capex_WindOffshore, opex_WindOffshore, cf_WindOffshore, capex_nuclear, opex_nuclear, cf_nuclear,
@@ -153,50 +153,50 @@ def parameters_present_conservative():
     ######### Eletrolisador ############
     ### Custos e parametros
     # PEM parametros
-    capex_pem = 1300 # USD/kW - IEA 2020
+    capex_pem = 1168 # USD/kW - IEA 2020
     opex_pem = 0.02 # %
 
     pot_pem = 988.68 # kW
     h2_pem = 17.976 # kg/h 
     FlowRate_pem = 200 # Nm3/h
-    ef_pem = 0
-    pem_energy_prod1kg = 55*1.01 # kWh/kg
+    ef_pem = 0.607
+    pem_energy_prod1kg = 55 # kWh/kg Datasheet considereing BOP
     lifetime_pem = 50000 # h IRENA
     bar_pem = 30
 
     # Alkalino parametros
-    capex_alk = 800 # $/kW - IEA 2020
+    capex_alk = 1140 # $/kW - IEA 2020
     opex_alk = 0.02
     
     pot_alk = 1000 # kW
     FlowRate_alk = 200
     h2_alk = FlowRate_alk*0.08988 # kg/h  nao to usando pra nada pois calculamos por fora a energia para produzir 1kg
-    ef_alk = 0
-    alk_energy_prod1kg = (4.8/0.08988) + (4.8/0.08988)*0.1 # kWh/kg
+    ef_alk = 0.6
+    alk_energy_prod1kg = 58.75 # kWh/kg (4.8/0.08988) + (4.8/0.08988)*0.1
     lifetime_alk = 80000 # h  Datasheet
     bar_alk = 30
 
     # Parametros SOEC
-    capex_soec = 4000 # $/kW - IEA 2020
+    capex_soec = 3000 # $/kW - IEA 2020
     opex_soec = 0.02 # %
 
     pot_soec = 1100 # kW
     h2_soec = 24 # kg/h nao to usando pra nada pois calculamos por fora a energia para produzir 1kg
     FlowRate_soec = h2_soec/0.08988
-    soec_energy_prod1kg = 39.4 + 39.4*0.1 # kWh/kg
-    ef_soec = 0
+    ef_soec = 0.757
+    soec_energy_prod1kg = 43.34 # kWh/kg 39.4 + 39.4*0.1
     lifetime_soec = 30000 # h IEA
     bar_soec = 1
 
     # Parametros AEM
-    capex_aem = (469.13+258.02) # $/kW - Atual
+    capex_aem = 931 # $/kW - Atual
     nao_utilizado_opex = 1
 
     pot_aem = 1000 # kW
     FlowRate_aem = 210 # Nm3/h
     h2_aem = 453/24 # kg/h -> So esta sendo utilizado para calcular o opex, pois energia para produzir 1kg eh calculada por fora
-    aem_energy_prod1kg = 53.3 # kWh/kg
     ef_aem = 0.625 # LHV
+    aem_energy_prod1kg = 53.3 # kWh/kg
     lifetime_aem = 20000 # h - (M. KIM et. al, 2024) - AEM Techno-economic
     bar_aem = 30
 
@@ -263,8 +263,8 @@ def parameters_present_otimism():
     pot_pem = 988.68 # kW
     h2_pem = 17.976 # kg/h 
     FlowRate_pem = 200 # Nm3/h
-    ef_pem = 0
-    pem_energy_prod1kg = 55*1.01 # kWh/kg
+    ef_pem = 0.657
+    pem_energy_prod1kg = (0.607/ef_pem)*55 # kWh/kg
     lifetime_pem = 50000 # h IRENA
     bar_pem = 30
 
@@ -275,32 +275,34 @@ def parameters_present_otimism():
     pot_alk = 1000 # kW
     FlowRate_alk = 200
     h2_alk = FlowRate_alk*0.08988 # kg/h  nao to usando pra nada pois calculamos por fora a energia para produzir 1kg
-    ef_alk = 0
-    alk_energy_prod1kg = (4.8/0.08988) + (4.8/0.08988)*0.1 # kWh/kg
+    ef_alk = 0.65
+    alk_energy_prod1kg = (0.6/ef_alk)*58.75 # kWh/kg (4.8/0.08988) + (4.8/0.08988)*0.1
     lifetime_alk = 80000 # h  Datasheet
     bar_alk = 30
 
     # Parametros SOEC
-    capex_soec = 2800 # $/kW - IEA 2020
+    capex_soec = 1800 # $/kW - IEA 2020
     opex_soec = 0.02 # %
 
     pot_soec = 1100 # kW
     h2_soec = 24 # kg/h nao to usando pra nada pois calculamos por fora a energia para produzir 1kg
-    FlowRate_soec = h2_soec/0.08988
-    soec_energy_prod1kg = 39.4 + 39.4*0.1 # kWh/kg
-    ef_soec = 0
+    FlowRate_soec = h2_soec/0.08988 
+    ef_soec = 0.807
+    soec_energy_prod1kg = (0.757/ef_soec)*43.34 # kWh/kg 39.4 + 39.4*0.1
     lifetime_soec = 30000 # h IEA
     bar_soec = 1
 
     # Parametros AEM
-    capex_aem = (469.13+258.02) # $/kW - Atual
+    capex_aem = 600 # $/kW - Atual
     nao_utilizado_opex = 1
 
     pot_aem = 1000 # kW
     FlowRate_aem = 210 # Nm3/h
     h2_aem = 453/24 # kg/h -> So esta sendo utilizado para calcular o opex, pois energia para produzir 1kg eh calculada por fora
-    aem_energy_prod1kg = 53.3 # kWh/kg
     ef_aem = 0.625 # LHV
+    aem_energy_prod1kg = 53.3 # kWh/kg
+    ef_aem = 0.675 # LHV
+    aem_energy_prod1kg = (0.625/ef_aem)*53.3 # kWh/kg
     lifetime_aem = 20000 # h - (M. KIM et. al, 2024) - AEM Techno-economic
     bar_aem = 30
 
@@ -789,8 +791,10 @@ def calculate_no_storage(t, wacc, capex_sol, opex_sol, cf_sol, capex_WindOnshore
 #     print(f'Nuclear AEM LCOH = {lcoh_no_storage_aem_nuclear:.2f} $/kg')    
 
 
-    plot_graph(lcoh_no_storage_pem_pv, lcoh_no_storage_pem_WindOnshore, lcoh_no_storage_pem_WindOffshore, lcoh_no_storage_pem_nuclear, lcoh_no_storage_alk_pv, lcoh_no_storage_alk_WindOnshore,lcoh_no_storage_alk_WindOffshore, lcoh_no_storage_alk_nuclear, 
-               lcoh_no_storage_soec_pv, lcoh_no_storage_soec_WindOnshore, lcoh_no_storage_soec_WindOffshore, lcoh_no_storage_soec_nuclear, lcoh_no_storage_aem_pv, lcoh_no_storage_aem_WindOnshore, lcoh_no_storage_aem_WindOffshore, lcoh_no_storage_aem_nuclear, txt_name_no_storage)
+    plot_graph(lcoh_no_storage_pem_pv, lcoh_no_storage_pem_WindOnshore, lcoh_no_storage_pem_WindOffshore, lcoh_no_storage_pem_nuclear,
+                lcoh_no_storage_alk_pv, lcoh_no_storage_alk_WindOnshore,lcoh_no_storage_alk_WindOffshore, lcoh_no_storage_alk_nuclear,
+                lcoh_no_storage_soec_pv, lcoh_no_storage_soec_WindOnshore, lcoh_no_storage_soec_WindOffshore, lcoh_no_storage_soec_nuclear,
+                lcoh_no_storage_aem_pv, lcoh_no_storage_aem_WindOnshore, lcoh_no_storage_aem_WindOffshore, lcoh_no_storage_aem_nuclear, txt_name_no_storage)
     
     write_txt(lcoh_no_storage_pem_pv, lcoh_no_storage_pem_WindOnshore, lcoh_no_storage_pem_WindOffshore, lcoh_no_storage_pem_nuclear,
           lcoh_no_storage_alk_pv, lcoh_no_storage_alk_WindOnshore, lcoh_no_storage_alk_WindOffshore, lcoh_no_storage_alk_nuclear,

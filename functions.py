@@ -190,7 +190,7 @@ def lcoh(tot_capex_el, tot_opex_el, tot_capex_energy, tot_opex_energy, ciclos, w
     Installation cost = 12% Total CAPEX
     Indirect cost = 20% Total CAPEX
     """
-    #capexEletrolisador = tot_capex_el + tot_capex_el*0.5*ciclos + 0.12*tot_capex_el + 0.2*tot_capex_el
+    #Considering replacement tot_capex_el + tot_capex_el*0.5*ciclos + 0.12*tot_capex_el + 0.2*tot_capex_el
     capexEletrolisador = tot_capex_el*(1.32+0.5*ciclos)
     capex_total = capexEletrolisador + tot_capex_energy
     opex_ano = tot_opex_el + tot_opex_energy
